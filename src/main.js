@@ -1,12 +1,48 @@
 import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import Router from "vue-router";
+import { routes } from "./router";
+import { store } from "./store";
+import { auth } from "./firebase_config";
 
-Vue.config.productionTip = false;
+import Buefy from "buefy";
+
+import Notifications from "vue-notification";
+
+// FILTERS
+import { monthday, shortdate } from "./filters/date";
+
+// COMPONENTS
+import App from "./App.vue";
+
+Vue.use(Router);
+Vue.use(Buefy);
+Vue.use(Notifications);
+
+import "./assets/styles/main.scss";
+
+const router = new Router({
+  mode: "history",
+  routes: routes,
+  linkActiveClass: "is-active"
+});
+
+import lodash from "lodash";
+Object.defineProperty(Vue.prototype, "$lodash", { value: lodash });
+
+Vue.filter("monthday", monthday);
+Vue.filter("shortdate", shortdate);
 
 new Vue({
+  el: "#app",
   router,
   store,
-  render: h => h(App)
-}).$mount("#app");
+  render: h => h(App),
+  created() {
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        this.$store.dispatch("user/PERSIST_LOGIN", user);
+        this.$store.dispatch("user/LOAD_USER_DATA");
+      }
+    });
+  }
+});

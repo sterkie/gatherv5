@@ -1,30 +1,45 @@
 <template>
   <div class="container">
     <div class="box">
+      <p class="heading is-size-4 has-text-centered has-text-weight-light">SIGN IN</p>
+      <div class="login-error-box notification is-danger" v-if="error">
+        <div class="heading is-clearfix">
+          <!-- <span class="icon has-text-danger is-pulled-left">
+            <i class="mdi mdi-alert-decagram mdi-24px"></i>
+          </span> -->
+          <p class="has-text-centered login-error-message">
+            {{error.message}}
+          </p>
+        </div>
+        <!-- <p v-if="error.code === 'auth/email-already-in-use'" class="heading">
+          <a @click="toLogin">Click here</a> to log in instead.
+        </p> -->
+      </div>
       <form @submit.prevent="login">
-        <b-field class="has-text-centered">
-          <h3 class="has-text-weight-light is-size-5">LOGIN</h3>
-        </b-field>
-        <b-field label="Email" class="" custom-class="is-small">
-          <b-input type="email" placeholder="Enter your email ... " v-model="email">
-          </b-input>
-        </b-field>
-        <b-field label="Password" class="" custom-class="is-small">
-          <b-input type="password" placeholder="Enter your password..." v-model="password" password-reveal>
-          </b-input>
-        </b-field>
-        <b-field class="form-buttons" grouped>
+        <div class="field">
+          <label class="label is-small">Email</label>
+          <div class="control">
+            <input class="input" type="email" v-model.trim="email">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label is-small">Password</label>
+          <div class="control">
+            <input class="input" type="password" v-model.trim="password">
+          </div>
+        </div>
+        <div class="field is-grouped form-buttons">
           <p class="control ">
-            <button class="button is-success is-outlined" type="submit ">
-              LOGIN
+            <button class="button is-small" type="submit">
+              LOG IN
             </button>
           </p>
           <p class="control ">
-            <button class="button is-info is-outlined " @click="cancel ">
+            <button class="button is-small " @click="cancel">
               CANCEL
             </button>
           </p>
-        </b-field>
+        </div>
       </form>
     </div>
   </div>
@@ -42,12 +57,7 @@ export default {
   watch: {
     user(value) {
       if (value !== undefined && value !== undefined) {
-        this.$notify({
-          group: "foo",
-          type: "success",
-          title: "Succes.",
-          text: "Successfully logged in."
-        });
+        this.$store.dispatch("CLEAR_ERROR");
         this.$router.push("/dashboard");
       }
     }
@@ -55,6 +65,9 @@ export default {
   computed: {
     user() {
       return this.$store.getters["user/user"];
+    },
+    error() {
+      return this.$store.getters.error;
     }
   },
 
@@ -73,12 +86,44 @@ export default {
 </script>
 
 <style scoped>
+.wut {
+  background-color: #fafafa;
+}
 .box {
-  width: 540px;
+  width: 620px;
   margin: 32px auto;
 }
 
 .form-buttons {
-  margin-top: 32px;
+  margin-top: 16px;
+}
+
+.help {
+  padding-left: 4px;
+}
+
+.label {
+  padding-left: 2px;
+}
+
+.login-error-box {
+  margin-top: 16px;
+  background-color: #f8f5f5;
+  color: #b62626;
+  width: 100%;
+  border-radius: 1px;
+  border-left: 2px solid #b62626;
+}
+
+.input {
+  font-size: 14px;
+}
+
+.label {
+  color: #696969;
+}
+
+.login-error-message {
+  padding-top: 6px;
 }
 </style>

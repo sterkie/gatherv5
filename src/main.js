@@ -6,6 +6,8 @@ import { auth } from "./firebase_config";
 
 import Buefy from "buefy";
 
+import Vuelidate from "vuelidate";
+
 import Notifications from "vue-notification";
 
 // FILTERS
@@ -17,6 +19,7 @@ import App from "./App.vue";
 Vue.use(Router);
 Vue.use(Buefy);
 Vue.use(Notifications);
+Vue.use(Vuelidate);
 
 import "./assets/styles/main.scss";
 

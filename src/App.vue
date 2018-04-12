@@ -1,7 +1,7 @@
 <template>
   <div>
     <notifications group="foo" width="200" position="top center" />
-    <TheHeader />
+    <TheHeader class="header" />
     <router-view> </router-view>
   </div>
 </template>
@@ -15,3 +15,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.header {
+  margin-bottom: 8px;
+}
+</style>

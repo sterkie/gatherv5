@@ -19,9 +19,10 @@ const actions = {
           .ref("users/")
           .child(user.uid)
           .set({ id: user.uid, username: payload.username });
+        let lowercasedUsername = payload.username.toLowerCase();
         db
           .ref("usernames")
-          .child(payload.username)
+          .child(lowercasedUsername)
           .set(user.uid)
           .then(
             commit("SET_USER", {
@@ -30,6 +31,9 @@ const actions = {
               registeredEvents: {}
             })
           );
+      })
+      .catch(e => {
+        commit("SET_ERROR", e, { root: true });
       });
   },
 
@@ -38,7 +42,9 @@ const actions = {
       .signInWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
         commit("SET_USER", { id: user.uid });
-        console.log("logged in", payload);
+      })
+      .catch(e => {
+        commit("SET_ERROR", e, { root: true });
       });
   },
 
@@ -51,7 +57,7 @@ const actions = {
       id: payload.uid
     };
     commit("SET_USER", tempUser);
-    console.log("persisted login", tempUser);
+    // console.log("persisted login", tempUser);
   },
 
   LOAD_USER_DATA: ({ getters, commit }) => {
@@ -65,7 +71,6 @@ const actions = {
       userObj.id = userId;
       userObj.username = snapshot.val().username;
       userObj.registeredEvents = registeredEvents;
-      console.log("loaded user data", userObj);
       commit("SET_USER", userObj);
     });
   }

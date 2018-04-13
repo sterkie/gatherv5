@@ -1,4 +1,4 @@
-import { auth, db } from "../../firebase_config";
+import { auth, fs } from "../../firebase_config";
 
 const state = {
   user: null
@@ -10,30 +10,33 @@ const mutations = {
   }
 };
 
+// db.collection('users').where('username', '==' usernametocheck).then()
+
 const actions = {
   REGISTER_USER: ({ commit }, payload) => {
     auth
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
-        db
-          .ref("users/")
-          .child(user.uid)
-          .set({ id: user.uid, username: payload.username });
-        let lowercasedUsername = payload.username.toLowerCase();
-        db
-          .ref("usernames")
-          .child(lowercasedUsername)
-          .set(user.uid)
+        fs
+          .collection("users")
+          .doc(user.uid)
+          .set({
+            id: user.uid,
+            username: payload.username.toLowerCase(),
+            displayname: payload.username
+          })
           .then(
             commit("SET_USER", {
               id: user.uid,
-              username: payload.username,
-              registeredEvents: {}
+              username: payload.username.toLowerCase(),
+              displayname: payload.username
             })
           );
       })
       .catch(e => {
-        commit("SET_ERROR", e, { root: true });
+        commit("SET_ERROR", e, {
+          root: true
+        });
       });
   },
 
@@ -57,22 +60,23 @@ const actions = {
       id: payload.uid
     };
     commit("SET_USER", tempUser);
-    // console.log("persisted login", tempUser);
   },
 
   LOAD_USER_DATA: ({ getters, commit }) => {
+    // IMPLEMENT FETCHING OF EVENTS
+
     let userId = getters.user.id;
     let userObj = {};
-    db.ref("users/" + userId).once("value", snapshot => {
-      let registeredEvents = {};
-      if (snapshot.hasChild("registeredEvents")) {
-        registeredEvents = snapshot.val().registeredEvents;
-      }
-      userObj.id = userId;
-      userObj.username = snapshot.val().username;
-      userObj.registeredEvents = registeredEvents;
-      commit("SET_USER", userObj);
-    });
+    fs
+      .collection("users")
+      .doc(userId)
+      .get()
+      .then(doc => {
+        userObj.id = userId;
+        userObj.username = doc.data().username;
+        userObj.displayname = doc.data().displayname;
+        commit("SET_USER", userObj);
+      });
   }
 };
 

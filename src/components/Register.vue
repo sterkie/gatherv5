@@ -37,12 +37,18 @@
         </div>
         <div class="field">
           <label class="label is-small">Username</label>
-          <div class="control">
-            <input class="input" type="text" placeholder="e.g. MarkSmith" v-model.trim="username" @input="delayTouch($v.username)" :class="{'is-danger': $v.username.$error || !this.unique && $v.username.$dirty, 'is-success': !$v.username.$invalid && $v.username.$dirty && this.unique}">
-            <p class="help is-danger" v-if="$v.username.$dirty && !$v.username.minLength">Username must be at least 3 characters</p>
-            <p class="help is-danger" v-if="$v.username.$dirty && !$v.username.alphaNum">Username can only contain letters and numbers.</p>
-            <p class="help is-danger" v-if="$v.username.$dirty && !this.unique && username.length > 2">This username is already taken.</p>
-            <p class="help is-success" v-if="$v.username.$dirty && this.unique && username.length > 2 && $v.username.alphaNum">This username is available!</p>
+          <div class="control" :class="{'is-loading': loading}">
+            <input class="input" type="text" placeholder="e.g. MarkSmith" v-model.trim="username" @input="delayTouch($v.username)" :class="{'is-danger': $v.username.$error && !loading || !this.unique && $v.username.$dirty && !loading, 'is-success': !$v.username.$invalid && $v.username.$dirty && this.unique && !loading}">
+            <!-- <input class="input" type="text" placeholder="e.g. MarkSmith" v-model.trim="username" @input="delayTouch($v.username)"> -->
+            <div v-if="loading">
+              <p class="help" v-if="$v.username.$dirty">Checking...</p>
+            </div>
+            <div v-if="!loading">
+              <p class="help is-danger" v-if="$v.username.$dirty && !$v.username.minLength">Username must be at least 3 characters</p>
+              <p class="help is-danger" v-if="$v.username.$dirty && !$v.username.alphaNum">Username can only contain letters and numbers.</p>
+              <p class="help is-danger" v-if="$v.username.$dirty && !this.unique && username.length > 2">This username is already taken.</p>
+              <p class="help is-success" v-if="$v.username.$dirty && this.unique && username.length > 2 && $v.username.alphaNum">This username is available!</p>
+            </div>
           </div>
         </div>
         <div class="field is-grouped form-buttons">
@@ -72,13 +78,14 @@ import {
   maxLength,
   alphaNum
 } from "vuelidate/lib/validators";
-import { db } from "../firebase_config";
+import { fs } from "../firebase_config";
+import debounce from "lodash/debounce";
 const touchMap = new WeakMap();
 export default {
   name: "Register",
   data() {
     return {
-      unique: false,
+      unique: true,
       email: "",
       password: "",
       password2: "",
@@ -107,7 +114,7 @@ export default {
   },
   watch: {
     username(value) {
-      if (!this.$v.username.$error) {
+      if (!this.$v.username.$error & (value.length > 2)) {
         this.checkIfUnique();
       }
     },
@@ -124,18 +131,25 @@ export default {
     },
     error() {
       return this.$store.getters.error;
+    },
+
+    loading() {
+      return this.$store.getters.loading;
     }
   },
+
   methods: {
-    checkIfUnique() {
+    checkIfUnique: debounce(function() {
+      this.$store.commit("SET_LOADING", true, { root: true });
       let uName = this.username.toLowerCase();
-      if (this.$v.username.alphaNum) {
-        let ref = db.ref("usernames/" + uName);
-        ref.on("value", snapshot => {
-          snapshot.exists() ? (this.unique = false) : (this.unique = true);
+      if (this.$v.username.alphaNum && uName.length > 2) {
+        let ref = fs.collection("users").where("username", "==", uName);
+        let check = ref.get().then(doc => {
+          doc.empty ? (this.unique = true) : (this.unique = false);
+          this.$store.commit("SET_LOADING", false, { root: true });
         });
       }
-    },
+    }, 400),
 
     delayTouch($v) {
       $v.$reset();
@@ -179,6 +193,7 @@ export default {
 }
 
 .help {
+  padding-top: 6px;
   padding-left: 4px;
 }
 

@@ -1,7 +1,9 @@
 <template>
-  <div class="container">
-    <div class="box">
-      welcome to your dashboard {{user ? user.username : '...'}}
+  <div v-if="user.displayname">
+    <div class="container">
+      <div class="box">
+        welcome to your dashboard {{user.displayname}}
+      </div>
     </div>
   </div>
 </template>

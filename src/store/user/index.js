@@ -14,6 +14,7 @@ const mutations = {
 
 const actions = {
   REGISTER_USER: ({ commit }, payload) => {
+    commit("SET_LOADING", false, { root: true });
     auth
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
@@ -37,6 +38,7 @@ const actions = {
         commit("SET_ERROR", e, {
           root: true
         });
+        commit("SET_LOADING", false, { root: true });
       });
   },
 
@@ -49,6 +51,7 @@ const actions = {
       })
       .catch(e => {
         commit("SET_ERROR", e, { root: true });
+        commit("SET_LOADING", false, { root: true });
       });
   },
 

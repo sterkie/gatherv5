@@ -1,6 +1,6 @@
 <template>
   <div>
-    <notifications group="foo" width="200" position="top center" />
+    <b-loading :active.sync="loading" :is-full-page="true"></b-loading>
     <TheHeader class="header" />
     <router-view> </router-view>
   </div>
@@ -12,6 +12,11 @@ export default {
   name: "App",
   components: {
     TheHeader
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    }
   }
 };
 </script>

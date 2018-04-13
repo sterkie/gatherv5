@@ -1,8 +1,11 @@
 <template>
-  <div v-if="user.displayname">
-    <div class="container">
+  <div>
+    <b-loading :active.sync="loading" :is-full-page="true"></b-loading>
+    <div class="container" v-if="!loading">
       <div class="box">
-        welcome to your dashboard {{user.displayname}}
+        <div class="content">
+          welcome to your dashboard {{user.displayname}}
+        </div>
       </div>
     </div>
   </div>
@@ -14,11 +17,16 @@ export default {
   computed: {
     user() {
       return this.$store.getters["user/user"];
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   }
 };
 </script>
 
 <style scoped>
-
+.box {
+  min-height: 50%;
+}
 </style>

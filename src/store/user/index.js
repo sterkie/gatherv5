@@ -41,6 +41,7 @@ const actions = {
   },
 
   LOGIN_USER: ({ commit }, payload) => {
+    commit("SET_LOADING", true, { root: true });
     auth
       .signInWithEmailAndPassword(payload.email, payload.password)
       .then(user => {
@@ -64,7 +65,7 @@ const actions = {
 
   LOAD_USER_DATA: ({ getters, commit }) => {
     // IMPLEMENT FETCHING OF EVENTS
-
+    commit("SET_LOADING", true, { root: true });
     let userId = getters.user.id;
     let userObj = {};
     fs
@@ -76,6 +77,7 @@ const actions = {
         userObj.username = doc.data().username;
         userObj.displayname = doc.data().displayname;
         commit("SET_USER", userObj);
+        commit("SET_LOADING", false, { root: true });
       });
   }
 };

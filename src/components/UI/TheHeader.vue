@@ -43,8 +43,6 @@ export default {
   padding-left: 16px;
   padding-top: 7px;
 }
-.navbar-item {
-}
 
 .nav-container {
   padding: 8px 0px;

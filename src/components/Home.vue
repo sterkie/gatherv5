@@ -1,11 +1,8 @@
 <template>
 
   <div class="container">
-
     <div class="columns">
-
       <div class="column box">
-
         <section class="section">
           <h1 class="title is-size-4 has-text-weight-light has-text-centered">Gather in a few steps</h1>
           <ul class="steps has-content-centered">
@@ -41,7 +38,6 @@
             </li>
           </ul>
         </section>
-
       </div>
     </div>
     <section class="hero is-small is-transparant">
@@ -63,10 +59,6 @@ export default {
 </script>
 
 <style scoped>
-.hero {
-  /* background-color: #17275e; */
-}
-
 .steps-segment {
   font-size: 14px;
 }

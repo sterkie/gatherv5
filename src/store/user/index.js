@@ -1,12 +1,16 @@
 import { auth, fs } from "../../firebase_config";
 
 const state = {
-  user: null
+  user: null,
+  selectedUser: null
 };
 
 const mutations = {
   SET_USER: (state, payload) => {
     state.user = payload;
+  },
+  SELECTED_USER: (state, payload) => {
+    state.selectedUser = payload;
   }
 };
 
@@ -82,12 +86,42 @@ const actions = {
         commit("SET_USER", userObj);
         commit("SET_LOADING", false, { root: true });
       });
+  },
+
+  GET_PROFILE({ commit }, payload) {
+    commit("SET_LOADING", true, { root: true });
+    fs
+      .collection("users")
+      .where("username", "==", payload)
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.empty) {
+          commit(
+            "SET_ERROR",
+            { message: "User could not be found" },
+            { root: true }
+          );
+          commit("SET_LOADING", false, { root: true });
+        } else {
+          querySnapshot.forEach(doc => {
+            commit("SELECTED_USER", doc.data());
+            commit("SET_LOADING", false, { root: true });
+          });
+        }
+      })
+      .catch(e => {
+        commit("SET_ERROR", e, { root: true });
+        commit("SET_LOADING", false, { root: true });
+      });
   }
 };
 
 const getters = {
   user(state) {
     return state.user;
+  },
+  selectedUser(state) {
+    return state.selectedUser;
   }
 };
 

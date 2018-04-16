@@ -10,8 +10,8 @@ $primary: #238edb;
 $warning: #dbb300;
 $danger: #b62626;
 $navbar-item-hover-color: $primary;
-$navbar-item-hover-background-color: #f0f0f0;
-$navbar-item-active-color: $primary;
+$navbar-item-hover-background-color: #e3eaee;
+$navbar-item-active-background-color: #e3eaee;
 $body-background-color: #f0f0f0;
 $label-weight: $weight-bold;
 $family-primary: "Raleway";
@@ -27,6 +27,16 @@ $input-focus-color: $grey-darker;
 $input-focus-border-color: $grey-lighter;
 $input-focus-box-shadow-size: 0;
 $input-focus-box-shadow-color: 0;
+
+$dropdown-content-background-color: #f8f5f5;
+
+$tabs-toggle-link-border-color: rgb(196, 180, 180);
+$tabs-toggle-link-hover-background-color: #e3eaee;
+$tabs-toggle-link-radius: 0px;
+$tabs-toggle-link-active-background-color: #e3eaee;
+$tabs-toggle-link-active-color: $primary;
+
+$column-gap: 0.5rem;
 
 @import "~bulma";
 @import "~buefy/src/scss/buefy";

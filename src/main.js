@@ -11,7 +11,7 @@ import Vuelidate from "vuelidate";
 import Notifications from "vue-notification";
 
 // FILTERS
-import { monthday, shortdate } from "./filters/date";
+import { monthday, shortdate, showMonth } from "./filters/date";
 
 // COMPONENTS
 import App from "./App.vue";
@@ -34,6 +34,7 @@ Object.defineProperty(Vue.prototype, "$lodash", { value: lodash });
 
 Vue.filter("monthday", monthday);
 Vue.filter("shortdate", shortdate);
+Vue.filter("showMonth", showMonth);
 
 new Vue({
   el: "#app",
@@ -45,6 +46,7 @@ new Vue({
       if (user) {
         this.$store.dispatch("user/PERSIST_LOGIN", user);
         this.$store.dispatch("user/LOAD_USER_DATA");
+        this.$store.dispatch("event/GET_EVENTS");
       }
     });
   }

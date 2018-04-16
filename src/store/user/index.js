@@ -14,8 +14,6 @@ const mutations = {
   }
 };
 
-// db.collection('users').where('username', '==' usernametocheck).then()
-
 const actions = {
   REGISTER_USER: ({ commit }, payload) => {
     commit("SET_LOADING", false, { root: true });

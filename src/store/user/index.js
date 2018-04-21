@@ -2,7 +2,8 @@ import { auth, fs } from "../../firebase_config";
 
 const state = {
   user: null,
-  selectedUser: null
+  selectedUser: null,
+  friends: []
 };
 
 const mutations = {
@@ -11,6 +12,12 @@ const mutations = {
   },
   SELECTED_USER: (state, payload) => {
     state.selectedUser = payload;
+  },
+  SET_FRIENDS: (state, payload) => {
+    state.friends = payload;
+  },
+  ADD_FRIEND: (state, payload) => {
+    state.friends.push(payload);
   }
 };
 
@@ -69,7 +76,6 @@ const actions = {
   },
 
   LOAD_USER_DATA: ({ getters, commit }) => {
-    // IMPLEMENT FETCHING OF EVENTS
     commit("SET_LOADING", true, { root: true });
     let userId = getters.user.id;
     let userObj = {};

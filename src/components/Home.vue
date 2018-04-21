@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="content-container">
     <div class="columns">
-      <div class="column box">
+      <div class="column ">
         <section class="section">
           <h1 class="title is-size-4 has-text-weight-light has-text-centered">Gather in a few steps</h1>
           <ul class="steps has-content-centered">
@@ -58,7 +58,9 @@ export default {
 </script>
 
 <style scoped>
-.steps-segment {
-  font-size: 14px;
+.content-container {
+  padding-top: 32px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
 </style>

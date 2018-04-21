@@ -1,43 +1,61 @@
 @import "~bulma/sass/utilities/initial-variables";
 @import "~bulma/sass/utilities/functions";
 
-$input-shadow: 0;
-$input-radius: 0;
-$control-radius: 0;
-$box-radius: 1px;
-$box-background-color: #f8f5f5;
-$primary: #238edb;
-$warning: #dbb300;
-$danger: #b62626;
-$navbar-item-hover-color: $primary;
-$navbar-item-hover-background-color: #e3eaee;
-$navbar-item-active-background-color: #e3eaee;
-$body-background-color: #f0f0f0;
-$label-weight: $weight-bold;
-$family-primary: "Raleway";
+$body-background-color: #2f313d;
+$background: #31373b;
+$bgdarker: #333544;
+$bgdarker-invert: invert($bgdarker);
+$bglighter: rgb(61, 61, 61);
+$bglighter-invert: invert($bglighter);
+$bgdarkest: #313131;
+$bgdarkest-invert: invert($bgdarkest);
+
+$gather: #42a9cb;
+$text: #d8d8d8;
+$body-color: #d8d8d8;
+$body-size: 14px;
+$border: $grey;
+$link: darken($gather, 30%);
+
+$primary: $gather;
+$primary-invert: invert($gather);
+
+$family-primary: "Nunito";
+
 @import "~bulma/sass/utilities/derived-variables";
-$button-focus-color: $link-focus;
-$button-focus-border-color: $link-focus-border;
-$button-focus-box-shadow-size: 0px;
-$button-focus-box-shadow-color: 0;
 
-$input-background-color: #f0f0f0;
+$addColors: (
+  "bgdarker": ($bgdarker, $bgdarker-invert),
+  "bglighter": ($bglighter, $bglighter-invert),
+  "bgdarkest": ($bgdarkest, $bgdarkest-invert)
+);
+$colors: map-merge($colors, $addColors);
 
-$input-focus-color: $grey-darker;
-$input-focus-border-color: $grey-lighter;
-$input-focus-box-shadow-size: 0;
-$input-focus-box-shadow-color: 0;
+$navbar-height: 4rem;
 
-$dropdown-content-background-color: #f8f5f5;
+$box-background-color: $bgdarker;
 
-$tabs-toggle-link-border-color: rgb(196, 180, 180);
-$tabs-toggle-link-hover-background-color: #e3eaee;
-$tabs-toggle-link-radius: 0px;
-$tabs-toggle-link-active-background-color: #e3eaee;
-$tabs-toggle-link-active-color: $primary;
+// DROPDOWN
 
-$column-gap: 0.5rem;
+$navbar-item-hover-background-color: lighten(#30313d, 10);
+
+$navbar-dropdown-background-color: $bgdarker;
+$navbar-dropdown-border-top: 0;
+$navbar-dropdown-arrow: $white;
+
+$navbar-dropdown-item-hover-color: #1395ec;
+$navbar-dropdown-item-hover-background-color: lighten(#30313d, 10);
+$navbar-dropdown-item-active-color: #646e80;
+$navbar-dropdown-item-active-background-color: lighten(#30313d, 10);
 
 @import "~bulma";
-@import "~buefy/src/scss/buefy";
+// @import "~buefy/src/scss/buefy";
 @import "./stepper.sass";
+
+.title {
+  color: #adadad;
+}
+
+.label {
+  color: #adadad;
+}

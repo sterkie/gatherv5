@@ -86,44 +86,5 @@ export default {
 </script>
 
 <style scoped>
-.wut {
-  background-color: #fafafa;
-}
-.box {
-  width: 620px;
-  margin: 32px auto;
-}
 
-.form-buttons {
-  margin-top: 16px;
-}
-
-.help {
-  padding-left: 4px;
-}
-
-.label {
-  padding-left: 2px;
-}
-
-.login-error-box {
-  margin-top: 16px;
-  background-color: #f8f5f5;
-  color: #b62626;
-  width: 100%;
-  border-radius: 1px;
-  border-left: 2px solid #b62626;
-}
-
-.input {
-  font-size: 14px;
-}
-
-.label {
-  color: #696969;
-}
-
-.login-error-message {
-  padding-top: 6px;
-}
 </style>

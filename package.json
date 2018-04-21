@@ -10,6 +10,7 @@
   "dependencies": {
     "buefy": "^0.6.5",
     "bulma": "^0.6.2",
+    "bulma-badge": "^1.0.1",
     "firebase": "^4.12.1",
     "lodash": "^4.17.5",
     "moment": "^2.22.0",

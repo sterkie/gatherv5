@@ -126,36 +126,5 @@ export default {
 </script>
 
 <style scoped>
-.box {
-  margin-bottom: 6px;
-}
-.input {
-  font-size: 14px;
-}
-.textarea {
-  font-size: 14px;
-}
 
-.select {
-  font-size: 14px;
-}
-
-.inviter-box {
-  height: 100%;
-  margin-left: 32px;
-}
-
-.event-create-part {
-  margin-bottom: 16px;
-}
-
-.event-create-part-header {
-  background-color: #c8c9ca70;
-  margin-bottom: 18px;
-  padding: 16px 16px 16px 8px;
-}
-
-.page--title {
-  margin-top: 18px;
-}
 </style>

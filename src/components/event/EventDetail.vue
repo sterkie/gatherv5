@@ -1,7 +1,16 @@
 <template>
-    <div>
-
+  <div class="columns is-gapless">
+    <div class="column is-2">
+      hello
     </div>
+    <div class="column is-5">
+      hello
+    </div>
+    <div class="column is-5">
+      hello
+    </div>
+
+  </div>
 </template>
 
 <script>

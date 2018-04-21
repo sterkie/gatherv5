@@ -3,13 +3,19 @@ import Vuex from "vuex";
 
 import user from "./user";
 import event from "./event";
+// import notification from "./notification";
+import friend from "./friend";
+import ui from "./ui";
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   modules: {
     user: user,
-    event: event
+    event: event,
+    // notification: notification,
+    friend: friend,
+    ui: ui
   },
   state: {
     loading: false,

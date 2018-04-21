@@ -1,0 +1,115 @@
+
+db.collection('users').doc('user_id').collection('friends').orderBy('username') // ALL FRIENDS FOR A USER
+
+db.collection('users').doc('user_id').collection('requests').orderBy('requestedAt') // ALL REQUESTS FOR A USER
+
+new request 
+--------------
+
+in friendslist.vue
+----------------
+
+created() {
+    if (this.user !== null) {
+    fs.collection('users').doc(this.user.id).collection('requests').onSnapshot(snap => {
+        let requests = [];
+        snap.forEach(request => {
+            requests.push(request)
+        })
+        this.$store.dispatch('friend/SET_REQUESTS', requests)
+    })
+    }
+}
+
+methods: 
+
+    sendFriendRequest() {
+        let potential_friend = this.potential_friend.toLowerCase();
+        if (potential_friend.length > 2)
+        {
+            let ref = fs.collection('users').where('username', '==', potential_friend)
+            ref.get().then(doc => {
+                if (doc.empty) {
+                    this.$store.commit('SET_ERROR', 'This user does not exist', {root: true})
+                } else {
+                    this.$store.dispatch('friend/SEND_FRIEND_REQUEST')
+                }
+            })
+        }
+    },
+
+acceptFriendRequest(request) {
+    this.$store.dispatch('friend/ACCEPT_FRIEND_REQUEST', request)
+}
+
+
+in vuex store
+-------------
+
+mutations
+----------
+
+SET_FRIENDS: (state, payload) => {
+  state.friends = payload
+}
+
+SET_REQUESTS: (state, payload) => {
+  state.requests = payload
+}
+
+ADD_FRIEND: (state, payload) => {
+  state.friends.push(payload)
+}
+
+REMOVE_FRIEND: (state, payload) => {
+  let currentFriends = state.friends
+  let index = currentFriends.findIndex(o=> o.id === payload.id)
+  state.friends = state.friends.splice(index, 1) 
+}
+
+DECLINE_FRIEND_REQUEST: (state, payload) => {
+  let currentRequests = state.requests;
+  let index = currentRequests.findIndex(o => o.id === payload.id) 
+  state.requests = state.requests.splice(index, 1)
+}
+
+
+
+actions
+----------
+
+GET_FRIENDS() {
+  let friends = []
+  db.collection('user').doc('currentUserid').collection('friends').orderBy('username').onSnapshot(snap => {
+    snap.forEach(friend => {
+      friends.push(friend.data())
+    })
+  })
+  .then(commit('SET_FRIENDS', friends))
+}
+
+SET_REQUESTS(payload) {
+    commit('SET_REQUESTS', payload)
+}
+
+SEND_FRIEND_REQUEST(payload) {
+  let user = rootGetters['user/user']
+  db.collection('users').doc(payload.id).collection('requests').doc(user.id)
+  .set({requester_id: user.id, requester_username: user.username, requester_displayname = user.displayname, requestedAt: new Date().getTime() })
+}
+
+ACCEPT_FRIEND_REQUEST(payload) {
+  db.collection('users').doc('user_id').collection('requests').doc('payload.id').delete()
+  db.collection('users').doc('user_id').collection('friends').doc(payload.id).set({friend_id: requester.Id, name: requester.username})
+  commit('ADD_FRIEND', requester)
+} 
+
+declineFriendRequest(requester) {
+  db.collection('users').doc('user_id').collection('requests').doc('requesterId').delete()
+  commit('DECLINE_FRIEND_REQUEST', requester.Id)
+}
+
+removeFriend (friend) {
+  db.collection('users').doc('user_id').collection('friends').doc('friend.id').delete();
+  commit('REMOVE_FRIEND', friend.id)
+}

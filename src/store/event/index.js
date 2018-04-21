@@ -32,7 +32,7 @@ const actions = {
       title: payload.title,
       location: payload.location,
       suggestedDates: payload.suggestedDates,
-      createdAt: new Date(),
+      createdAt: new Date().getTime(),
       creator_id: rootGetters["user/user"].id,
       creator_displayname: rootGetters["user/user"].displayname,
       event_status: payload.event_status,

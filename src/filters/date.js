@@ -8,6 +8,10 @@ export const shortdate = value => {
   return moment(value).format("dddd MMMM Do");
 };
 
+export const ago = value => {
+  return moment(value).fromNow();
+};
+
 export const showMonth = value => {
   let months = [
     "January",

@@ -5,7 +5,10 @@
       <small class="beta has-text-primary is-size-7">beta</small>
     </div>
     <div class="navbar-end">
-      <div class="navbar-item">
+      <router-link to="/login" class="navbar-item" v-if="!isAuthenticated">SIGN IN</router-link>
+      <router-link to="/register" class="navbar-item" v-if="!isAuthenticated">CREATE ACCOUNT</router-link>
+
+      <div class="navbar-item" v-if="isAuthenticated">
         <button class="button is-rounded create-event-button">
           New event
           <span class="icon is-small">
@@ -13,22 +16,26 @@
           </span>
         </button>
       </div>
-      <div class="navbar-item">
+      <div class="navbar-item" v-if="isAuthenticated">
         <span class="icon">
           <i class="mdi mdi-magnify header-icon"></i>
         </span>
       </div>
-      <div class="navbar-item">
+      <div class="navbar-item" v-if="isAuthenticated">
         <span class="icon">
           <i class="mdi mdi-bell-outline header-icon"></i>
         </span>
       </div>
 
-      <div class="navbar-item has-dropdown" :class="{'is-active': dropdownActive}">
+      <div class="navbar-item has-dropdown" :class="{'is-active': dropdownActive}" v-click-outside="close" v-if="isAuthenticated">
         <div class="navbar-link" @click="dropdownActive = !dropdownActive">
           <img src="http://i.pravatar.cc/400" class="avatar">
         </div>
-        <div class="navbar-dropdown is-right is-boxed">
+        <div class="navbar-dropdown is-right">
+          <p class="navbar-item">
+            Logged in as Stefaan Sterk
+          </p>
+          <div class="navbar-divider"></div>
           <a class="navbar-item" href="/settings">
             <span class="icon">
               <i class="mdi mdi-settings dropdown-icon"></i>
@@ -41,13 +48,7 @@
             </span>
             <span>Log out</span>
           </a>
-          <div class="navbar-divider"></div>
-          <div class="navbar-item">
-            <span class="icon">
-              <i class="fa fa-refresh"></i>
-            </span>
-            <span>Last synced at 14:32:08 on 25 Sep 17</span>
-          </div>
+
         </div>
       </div>
 
@@ -74,6 +75,9 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch("user/LOGOUT_USER").then(this.$router.push("/"));
+    },
+    close() {
+      this.dropdownActive = false;
     }
   }
 };
@@ -137,7 +141,7 @@ button span {
   color: white;
 }
 .dropdown-icon {
-  font-size: 22px;
+  font-size: 18px;
   color: white;
   padding-right: 12px;
 }
@@ -147,8 +151,12 @@ button span {
   padding-left: 8px;
 }
 
-.dropdown-menu {
-  padding-top: 32px;
-  padding-right: 44px;
+.navbar-dropdown {
+  margin-top: 2px;
+  border: 1px solid #333544;
+}
+
+.navbar-divider {
+  background-color: #5278a2;
 }
 </style>

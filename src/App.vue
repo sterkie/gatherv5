@@ -2,11 +2,11 @@
   <div>
     <b-loading :active.sync="loading" :is-full-page="true"></b-loading>
     <TheHeader class="header" />
-    <div class="columns is-gapless pa">
+    <div class="columns  ">
       <div class="column is-narrow is-hidden-mobile" v-if="user">
         <SideNav class="sideNav has-background-grey" />
       </div>
-      <div class="column pa">
+      <div class="column ">
         <router-view> </router-view>
       </div>
     </div>

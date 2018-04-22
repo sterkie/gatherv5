@@ -16,15 +16,37 @@
                 </div>
               </div>
               <div class="level-right">
-                <div class="level-item">
-                  <button class="button add-friend-button">
-                    <span class="icon is-small">
-                      <i class="mdi mdi-plus"></i>
-                    </span>
-                    Add a Friend</button>
-                </div>
+                <transition name="fade" mode="out-in">
+                  <div class="level-item" v-if="!showAddFriend">
+                    <button class="button add-friend-button" @click="showAddFriend = true">
+                      <span class="icon is-small">
+                        <i class="mdi mdi-plus"></i>
+                      </span>
+                      Add a Friend</button>
+                  </div>
+                  <div class="level-item" v-if="showAddFriend">
+                    <button class="button cancel-add-friend-button" @click="cancelFriendRequest">
+                      Cancel</button>
+                  </div>
+                </transition>
               </div>
             </nav>
+            <transition name="fade">
+              <div class="add-friend-container" v-if="showAddFriend">
+                <input type="text" placeholder="Enter a username..." v-model="potentialFriend">
+                <button class="button friend-request-button" @click="sendFriendRequest">
+                  <span class="icon is-large">
+                    <i class="mdi mdi-plus" style="font-size: 24px"></i>
+                  </span>
+                </button>
+
+              </div>
+            </transition>
+            <div v-if="doesntExistMsg.length" class="request-error"> {{doesntExistMsg}} </div>
+            <div v-if="selfAddedMsg.length" class="request-error">{{selfAddedMsg}} </div>
+            <div v-if="alreadyFriendsMsg.length" class="request-error">{{alreadyFriendsMsg}}</div>
+            <div v-if="requestSentMsg.length" class="request-sent">{{ requestSentMsg }}</div>
+
             <div class="requests--container">
               <div class="friends--card">
                 <div class="friends--card-header">
@@ -43,7 +65,7 @@
                     </div>
                     <div class="level-right">
                       <div class="level-item request--accept">
-                        <div class="button is-success">Accept</div>
+                        <div class="button is-success" @click="acceptFriendRequest(request)">Accept</div>
                       </div>
                       <div class="level-item request--decline">
                         <div class="tag is-danger">Decline</div>
@@ -82,14 +104,14 @@
                   </div>
                   <div class="level-right">
                     <div class="level-item request--decline">
-                      <div class="button remove-friend-button">Remove</div>
+                      <div class="button remove-friend-button" @click="removeFriend(friend)">Remove</div>
                     </div>
                   </div>
                 </nav>
               </div>
             </div>
           </div>
-          <div class="column is-one-third">
+          <div class="column is-half">
 
           </div>
         </div>
@@ -104,35 +126,85 @@ export default {
   name: "FriendsList",
   data() {
     return {
-      doesntExist: "",
+      requestSentMsg: "",
+      doesntExistMsg: "",
       potentialFriend: "",
-      showAddFriend: false
+      showAddFriend: false,
+      alreadyFriendsMsg: "",
+      selfAddedMsg: ""
     };
   },
+  created() {
+    // this.resetMsgs();
+    this.showAddFriend = false;
+  },
   methods: {
+    alreadyFriends(pfriend) {
+      let index = this.friends.findIndex(
+        user => user.friend_username === pfriend
+      );
+      return index < 0 ? false : true;
+    },
+
+    addSelf(pfriend) {
+      return this.user.username === pfriend ? true : false;
+    },
+
+    resetMsgs() {
+      this.alreadyFriendsMsg = "";
+      this.selfAddedMsg = "";
+      this.doesntExistMsg = "";
+      this.requestSentMsg = "";
+    },
+
     sendFriendRequest() {
-      let potential_friend = this.potentialFriend.toLowerCase();
-      if (potential_friend.length > 2) {
-        let ref = fs
-          .collection("users")
-          .where("username", "==", potential_friend);
-        ref.get().then(snap => {
-          if (!snap.empty) {
-            snap.forEach(doc => {
-              this.$store.dispatch("friend/SEND_FRIEND_REQUEST", doc.data().id);
-              this.authError = "";
-            });
-          } else {
-            this.doesntExist = "This user does not exist";
-          }
-        });
+      this.resetMsgs();
+      let pfriend = this.potentialFriend.toLowerCase();
+      console.log(pfriend);
+      if (pfriend.length > 2) {
+        if (this.alreadyFriends(pfriend)) {
+          this.alreadyFriendsMsg = "You are already friends";
+        } else if (this.addSelf(pfriend)) {
+          this.alreadyFriendsMsg =
+            "You tried to send yourself a friend-request";
+        } else {
+          let ref = fs.collection("users").where("username", "==", pfriend);
+          ref.get().then(snap => {
+            if (!snap.empty) {
+              this.showAddFriend = false;
+              this.potentialFriend = "";
+              snap.forEach(doc => {
+                this.$store.dispatch(
+                  "friend/SEND_FRIEND_REQUEST",
+                  doc.data().id
+                );
+                this.requestSentMsg = `Sent a friend request to ${
+                  doc.data().displayname
+                }`;
+              });
+              // USER DOESNT EXIST
+            } else {
+              this.doesntExistMsg = "This user does not exist";
+            }
+          });
+        }
       }
+    },
+    cancelFriendRequest() {
+      this.potentialFriend = "";
+      this.resetMsgs();
+      this.showAddFriend = false;
     },
 
     acceptFriendRequest(request) {
       this.$store.dispatch("friend/ACCEPT_FRIEND_REQUEST", request);
+    },
+
+    removeFriend(friend) {
+      console.log("removed", friend.friend_displayname);
     }
   },
+
   computed: {
     user() {
       return this.$store.getters["user/user"];
@@ -157,6 +229,38 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.add-friend-container {
+  // background: #383b48;
+  color: white;
+  // padding: 6px;
+  margin-bottom: 16px;
+  position: relative;
+  box-sizing: border-box;
+
+  input {
+    background: #292a31;
+    color: white;
+    border: 0;
+    width: 90%;
+    height: 32px;
+    padding: 8px;
+    outline: none;
+    &::placeholder {
+      color: white;
+    }
+  }
+  button {
+    border: 1px solid #43afd2;
+    color: white;
+    background: #43afd2;
+    width: 10%;
+    position: absolute;
+    right: 0px;
+    &:hover {
+      background: darken(#43afd2, 10%);
+    }
+  }
+}
 .friends--container {
   padding: 24px;
   align-items: center;
@@ -181,6 +285,10 @@ export default {
     // border: 1px solid #2c2d33;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     height: 100%;
+    &:hover {
+      background: lighten(#333440, 3%);
+      cursor: pointer;
+    }
   }
 }
 .friends-page-header {
@@ -243,10 +351,6 @@ export default {
   padding-bottom: 16px;
 }
 
-.add-friend--container {
-  padding-bottom: 16px;
-}
-
 .add-friend-button {
   background-color: transparent;
   border-color: #43afd2;
@@ -256,6 +360,32 @@ export default {
   }
   &:hover {
     border-color: lighten(#43afd2, 15%);
+  }
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.request-error {
+  padding: 6px;
+  color: #9a3f3f;
+  background: lightcoral;
+  margin-top: 0px;
+}
+
+.cancel-add-friend-button {
+  background-color: transparent;
+  color: #9a3f3f;
+  border: 0px;
+  outline: none;
+  .icon {
+    padding-right: 7px;
+  }
+  &:hover {
+    color: lighten(#9a3f3f, 10%);
+  }
+  &:focus {
+    box-shadow: none;
   }
 }
 
@@ -274,7 +404,7 @@ export default {
 }
 
 .fade-enter,
-.fade-leave-active {
+.fade-leave-to {
   opacity: 0;
 }
 </style>

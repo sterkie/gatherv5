@@ -1,17 +1,17 @@
 <template>
-    <div class="container" v-if="!loading">
-        <div v-if="error">{{ error.message }}</div>
-        <div v-if="selectedUser">
-            user profile for {{selectedUser.displayname}}
-        </div>
+  <div class="container" v-if="!loading">
+    <div v-if="error">{{ error.message }}</div>
+    <div v-if="selectedUser">
+      Friend profile for {{selectedUser.displayname}}
     </div>
+  </div>
 </template>
 
 <script>
 export default {
   props: ["username"],
   name: "UserProfile",
-  created() {
+  beforeMount() {
     this.getProfile();
   },
   methods: {

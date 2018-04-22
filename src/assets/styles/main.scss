@@ -15,7 +15,7 @@ $text: #d8d8d8;
 $body-color: #d8d8d8;
 $body-size: 14px;
 $border: $grey;
-$link: darken($gather, 30%);
+$link: #42a9cb;
 
 $primary: $gather;
 $primary-invert: invert($gather);
@@ -43,7 +43,7 @@ $navbar-dropdown-background-color: $bgdarker;
 $navbar-dropdown-border-top: 0;
 $navbar-dropdown-arrow: $white;
 
-$navbar-dropdown-item-hover-color: #1395ec;
+$navbar-dropdown-item-hover-color: #42a9cb;
 $navbar-dropdown-item-hover-background-color: lighten(#30313d, 10);
 $navbar-dropdown-item-active-color: #646e80;
 $navbar-dropdown-item-active-background-color: lighten(#30313d, 10);

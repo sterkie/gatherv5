@@ -5,7 +5,7 @@ import Login from "../components/Login.vue";
 import Dashboard from "../components/Dashboard.vue";
 import EventDetail from "../components/event/EventDetail.vue";
 import EventCreate from "../components/event/EventCreate.vue";
-import UserProfile from "../components/user/UserProfile.vue";
+import FriendProfile from "../components/friend/FriendProfile.vue";
 import FriendsList from "../components/friend/FriendsList.vue";
 import AuthGuard from "./auth-guard";
 
@@ -19,7 +19,7 @@ export const routes = [
   { path: "/events/:id", component: EventDetail, beforeEnter: AuthGuard },
   {
     path: "/users/:username",
-    component: UserProfile,
+    component: FriendProfile,
     props: true,
     beforeEnter: AuthGuard
   },

@@ -1,9 +1,28 @@
 <template>
-  <div class="container" v-if="!loading">
-    <div v-if="error">{{ error.message }}</div>
-    <div v-if="selectedUser">
-      Friend profile for {{selectedUser.displayname}}
+  <div class="profile-container">
+    <div class="profile-header">
+      <h3 class="profile-title">
+        FRIEND PROFILE
+      </h3>
     </div>
+    <transition name="fade" mode="out-in">
+      <div class="info-box" v-if="selectedUser" :key="selectedUser.id">
+        <nav class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <div>
+                <p class="profile-heading">
+                  Username
+                </p>
+                <p class="profile-subheading">
+                  {{selectedUser.displayname}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -16,9 +35,11 @@ export default {
   },
   methods: {
     getProfile() {
-      let lc = this.username.toLowerCase();
-      this.$store.dispatch("user/GET_PROFILE", lc);
+      this.$store.dispatch("user/GET_PROFILE", this.username);
     }
+  },
+  watch: {
+    $route: "getProfile"
   },
   computed: {
     error() {
@@ -34,6 +55,51 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.profile-container {
+  padding: 18px;
+  .profile-header {
+    font-size: 1.5rem;
+    font-weight: 200;
+    text-transform: uppercase;
+    background: transparent;
+    margin-bottom: 1.5rem;
+    .profile-title {
+      color: #596477;
+    }
+    span {
+      color: #6eb3d6;
+      font-size: 1.6rem;
+    }
+  }
+  .info-box {
+    background: transparent;
+    color: #55626691;
+    padding-left: 16px;
+    border-left: 2px solid #43afd2;
+    margin-top: 16px;
+  }
+  .profile-heading {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    font-size: 18px;
+    color: #6f808a;
+    letter-spacing: 1.1px;
+  }
+  .profile-subheading {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+  }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
 
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

@@ -27,30 +27,33 @@
         </span>
       </div>
 
-      <div class="navbar-item has-dropdown" :class="{'is-active': dropdownActive}" v-click-outside="close" v-if="isAuthenticated">
-        <div class="navbar-link" @click="dropdownActive = !dropdownActive">
-          <img src="http://i.pravatar.cc/400" class="avatar">
-        </div>
-        <div class="navbar-dropdown is-right">
-          <p class="navbar-item">
-            Logged in as Stefaan Sterk
-          </p>
-          <div class="navbar-divider"></div>
-          <a class="navbar-item" href="/settings">
-            <span class="icon">
-              <i class="mdi mdi-settings dropdown-icon"></i>
-            </span>
-            <span>Settings</span>
-          </a>
-          <a class="navbar-item" @click="logOut">
-            <span class="icon">
-              <i class="mdi mdi-logout-variant dropdown-icon"></i>
-            </span>
-            <span>Log out</span>
-          </a>
+      <transition name="fade">
+        <div class="navbar-item has-dropdown" :class="{'is-active': dropdownActive}" v-click-outside="close" v-if="isAuthenticated">
+          <div class="navbar-link" @click="dropdownActive = !dropdownActive">
+            <img src="http://i.pravatar.cc/400" class="avatar">
+          </div>
+          <div class="navbar-dropdown is-right">
+            <p class="navbar-item">
+              Logged in as
+              <span v-if="user && user.displayname"> {{user.displayname}}</span>
+            </p>
+            <div class="navbar-divider"></div>
+            <a class="navbar-item" href="/settings">
+              <span class="icon">
+                <i class="mdi mdi-settings dropdown-icon"></i>
+              </span>
+              <span>Settings</span>
+            </a>
+            <a class="navbar-item" @click="logOut">
+              <span class="icon">
+                <i class="mdi mdi-logout-variant dropdown-icon"></i>
+              </span>
+              <span>Log out</span>
+            </a>
 
+          </div>
         </div>
-      </div>
+      </transition>
 
     </div>
   </div>
@@ -86,12 +89,15 @@ export default {
 <style scoped lang="scss">
 .navbar {
   color: #ffff;
+  border-top: 2px solid lightblue;
   background: #333544;
 }
 .navbar-brand {
   margin-left: 22px;
   font-size: 24px;
-  letter-spacing: 0.2rem;
+  letter-spacing: 0.3rem;
+  font-family: "Lato";
+  color: #d5e4e8;
 }
 
 .navbar-end {
@@ -154,9 +160,20 @@ button span {
 .navbar-dropdown {
   margin-top: 2px;
   border: 1px solid #333544;
+  width: 264px;
 }
 
 .navbar-divider {
   background-color: #5278a2;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.7s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

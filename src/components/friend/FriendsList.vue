@@ -1,129 +1,145 @@
 <template>
-  <div class="container">
-    <div class="container">
-      <div class="columns ">
-        <div class="column is-half">
-          <div class="friends--container">
+  <!-- <div class="container"> -->
+  <div class="columns ">
+    <div class="column is-one-third">
+      <div class="friends--container">
+        <nav class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <div class="friends-page-header">
+                <!-- <span class="icon">
+                  <i class="mdi mdi-account-multiple mdi-36px"></i>
+                </span> -->
+                <span class="has-text-weight-light page-title is-size-4">FRIENDS</span>
+              </div>
+            </div>
+          </div>
+          <div class="level-right">
+
+            <div class="level-item" v-if="!showAddFriend">
+              <button class="button add-friend-button" @click="showAddFriend = true">
+                <span class="icon is-small">
+                  <i class="mdi mdi-plus"></i>
+                </span>
+                Add a friend</button>
+            </div>
+            <div class="level-item" v-if="showAddFriend">
+              <button class="button cancel-add-friend-button" @click="cancelFriendRequest">
+                Cancel</button>
+            </div>
+
+          </div>
+        </nav>
+        <transition name="fade" mode="out-in" tag="div">
+          <div class="add-friend-container" v-if="showAddFriend">
+            <input type="text" placeholder="Enter a username..." v-model="potentialFriend" @input="$v.potentialFriend.$touch">
+            <button class="button friend-request-button" @click="sendFriendRequest">
+              <span class="icon is-large">
+                <i class="mdi mdi-plus" style="font-size: 24px"></i>
+              </span>
+            </button>
+          </div>
+        </transition>
+
+        <transition name="fade" tag="div">
+          <div v-if="doesntExistMsg.length" class="danger"> {{doesntExistMsg}} </div>
+          <div v-if="selfAddedMsg.length" class="danger">{{selfAddedMsg}} </div>
+          <div v-if="alreadyFriendsMsg.length" class="danger">{{alreadyFriendsMsg}}</div>
+          <div v-if="invalidUserNameMsg.length" class="danger">{{ invalidUserNameMsg }}</div>
+          <div v-if="requestSentMsg.length" class="success">
+            <i class="mdi mdi-check"></i>{{ requestSentMsg }}</div>
+        </transition>
+
+        <div class="requests--container">
+          <div class="friends--card">
+            <div class="friends--card-header">
+              <h3 class="is-size-5 has-text-weight-light">Requests
+                <span class=" is-size-5" :class="{'has-text-primary': requests.length}"> ( {{requests.length ? requests.length : 'None'}} )</span>
+              </h3>
+            </div>
+            <div class="friends--card-content is-size-6" v-for="request in requests" :key="request.friend_id">
+              <nav class="level">
+                <div class="level-left">
+                  <div class="level-item">
+                    <img :src="'http://i.pravatar.cc/' + randomAvatar" class="avatar">
+                  </div>
+                  <div class="level-item">
+                    <span class="request--username ">{{request.requester_displayname}}</span> wants to be your friend
+                  </div>
+                </div>
+                <div class="level-right">
+                  <div class="level-item">
+                    <div class="button accept-request" @click="acceptFriendRequest(request)">Accept</div>
+                  </div>
+                  <div class="level-item">
+                    <div class="button decline-request" @click="declineFriendRequest(request)">Decline</div>
+                  </div>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <div class="friends--card">
+          <div class="friends--card-header">
             <nav class="level">
               <div class="level-left">
                 <div class="level-item">
-                  <div class="friends-page-header">
-                    <span class="icon">
-                      <i class="mdi mdi-account-multiple mdi-36px"></i>
-                    </span>
-                    <span class="has-text-weight-light page-title is-size-4">FRIENDS</span>
-                  </div>
+                  <h3 class="is-size-5 has-text-weight-light">Current friends
+                    <span :class="{'has-text-primary': friends.length}"> ( {{friends.length ? friends.length : 'None'}} )</span>
+                  </h3>
                 </div>
               </div>
               <div class="level-right">
-                <transition name="fade" mode="out-in">
-                  <div class="level-item" v-if="!showAddFriend">
-                    <button class="button add-friend-button" @click="showAddFriend = true">
-                      <span class="icon is-small">
-                        <i class="mdi mdi-plus"></i>
-                      </span>
-                      Add a Friend</button>
-                  </div>
-                  <div class="level-item" v-if="showAddFriend">
-                    <button class="button cancel-add-friend-button" @click="cancelFriendRequest">
-                      Cancel</button>
-                  </div>
-                </transition>
+                <div class="level-item filter-container">
+                  <input type="text" placeholder="Filter" class="filter-input" v-model="searchTerm">
+                  <i class="mdi mdi-magnify"></i>
+                </div>
               </div>
             </nav>
-            <transition name="fade">
-              <div class="add-friend-container" v-if="showAddFriend">
-                <input type="text" placeholder="Enter a username..." v-model="potentialFriend">
-                <button class="button friend-request-button" @click="sendFriendRequest">
-                  <span class="icon is-large">
-                    <i class="mdi mdi-plus" style="font-size: 24px"></i>
-                  </span>
-                </button>
-
-              </div>
-            </transition>
-            <div v-if="doesntExistMsg.length" class="request-error"> {{doesntExistMsg}} </div>
-            <div v-if="selfAddedMsg.length" class="request-error">{{selfAddedMsg}} </div>
-            <div v-if="alreadyFriendsMsg.length" class="request-error">{{alreadyFriendsMsg}}</div>
-            <div v-if="requestSentMsg.length" class="request-sent">{{ requestSentMsg }}</div>
-
-            <div class="requests--container">
-              <div class="friends--card">
-                <div class="friends--card-header">
-                  <h3 class="is-size-5 has-text-weight-light">Requests (
-                    <span class="has-text-grey is-size-6">{{requests.length > 0 ? requests.length : 'None'}}</span> )</h3>
-                </div>
-                <div class="friends--card-content is-size-6" v-for="request in requests" :key="request.friend_id">
-                  <nav class="level">
-                    <div class="level-left">
-                      <div class="level-item">
-                        <img :src="'http://i.pravatar.cc/' + randomAvatar" class="avatar">
-                      </div>
-                      <div class="level-item">
-                        <span class="request--username ">{{request.requester_displayname}}</span> wants to be your friend
-                      </div>
-                    </div>
-                    <div class="level-right">
-                      <div class="level-item request--accept">
-                        <div class="button is-success" @click="acceptFriendRequest(request)">Accept</div>
-                      </div>
-                      <div class="level-item request--decline">
-                        <div class="tag is-danger">Decline</div>
-                      </div>
-                    </div>
-                  </nav>
-                </div>
-              </div>
-            </div>
-            <div class="friends--card">
-              <div class="friends--card-header">
-                <nav class="level">
-                  <div class="level-left">
-                    <div class="level-item">
-                      <h3 class="is-size-5 has-text-weight-light">Current friends (
-                        <span class="has-text-primary is-size-6">{{friends.length}}</span> )</h3>
-                    </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item filter-container">
-                      <input type="text" placeholder="Filter" class="filter-input">
-                      <i class="mdi mdi-magnify"></i>
-                    </div>
-                  </div>
-                </nav>
-              </div>
-              <div class="friends--card-content is-size-6" v-for="(friend, index) in friends" :key="friend.friend_id">
-                <nav class="level">
-                  <div class="level-left">
-                    <div class="level-item">
-                      <img :src="'http://i.pravatar.cc/' + (index * 10) + 20" class="avatar">
-                    </div>
-                    <div class="level-item">
-                      <span class="request--username ">{{friend.friend_displayname}}</span>
-                    </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item request--decline">
-                      <div class="button remove-friend-button" @click="removeFriend(friend)">Remove</div>
-                    </div>
-                  </div>
-                </nav>
-              </div>
-            </div>
           </div>
-          <div class="column is-half">
-
-          </div>
+          <transition-group name="fade" mode="out-in">
+            <div class="friends--card-content is-size-6" v-for="(friend, index) in filteredFriends" :key="friend.friend_id" @click="viewProfile(friend.friend_username)">
+              <nav class="level">
+                <div class="level-left">
+                  <div class="level-item">
+                    <img :src="'http://i.pravatar.cc/' + (index * 10) + 20" class="avatar">
+                  </div>
+                  <div class="level-item">
+                    <span class="request--username ">{{friend.friend_displayname}}</span>
+                  </div>
+                </div>
+                <div class="level-right">
+                  <div class="level-item request--decline">
+                    <div class="button danger" @click="removeFriend(friend)">Remove</div>
+                  </div>
+                </div>
+              </nav>
+            </div>
+          </transition-group>
         </div>
       </div>
     </div>
+    <div class="column is-two-fifths profile-column">
+      <transition name="fade" appear>
+        <router-view></router-view>
+      </transition>
+    </div>
   </div>
+  <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 <script>
+import { alphaNum } from "vuelidate/lib/validators";
 import { fs } from "../../firebase_config";
+
 export default {
   name: "FriendsList",
+  validations: {
+    potentialFriend: {
+      alphaNum
+    }
+  },
   data() {
     return {
       requestSentMsg: "",
@@ -131,11 +147,13 @@ export default {
       potentialFriend: "",
       showAddFriend: false,
       alreadyFriendsMsg: "",
-      selfAddedMsg: ""
+      selfAddedMsg: "",
+      invalidUserNameMsg: "",
+      searchTerm: ""
     };
   },
   created() {
-    // this.resetMsgs();
+    this.resetMsgs();
     this.showAddFriend = false;
   },
   methods: {
@@ -155,6 +173,7 @@ export default {
       this.selfAddedMsg = "";
       this.doesntExistMsg = "";
       this.requestSentMsg = "";
+      this.invalidUserNameMsg = "";
     },
 
     sendFriendRequest() {
@@ -167,6 +186,9 @@ export default {
         } else if (this.addSelf(pfriend)) {
           this.alreadyFriendsMsg =
             "You tried to send yourself a friend-request";
+        } else if (!this.$v.potentialFriend.alphaNum) {
+          this.invalidUserNameMsg =
+            "A username can only contain letters and numbers";
         } else {
           let ref = fs.collection("users").where("username", "==", pfriend);
           ref.get().then(snap => {
@@ -181,6 +203,9 @@ export default {
                 this.requestSentMsg = `Sent a friend request to ${
                   doc.data().displayname
                 }`;
+                setTimeout(() => {
+                  this.resetMsgs();
+                }, 5000);
               });
               // USER DOESNT EXIST
             } else {
@@ -200,8 +225,17 @@ export default {
       this.$store.dispatch("friend/ACCEPT_FRIEND_REQUEST", request);
     },
 
+    declineFriendRequest(request) {
+      this.$store.dispatch("friend/DECLINE_FRIEND_REQUEST", request);
+    },
+
     removeFriend(friend) {
-      console.log("removed", friend.friend_displayname);
+      this.$store.dispatch("friend/REMOVE_FRIEND", friend);
+    },
+
+    viewProfile(username) {
+      console.log(username);
+      this.$router.push({ path: `/friends/${username}` });
     }
   },
 
@@ -223,6 +257,16 @@ export default {
     },
     randomAvatar() {
       return Math.floor(Math.random() * 70);
+    },
+    filteredFriends() {
+      let st = this.searchTerm;
+      let friends = this.friends;
+      if (!st.length) {
+        return friends;
+      }
+      return friends.filter(friend => {
+        return friend.friend_username.indexOf(st.toLowerCase()) > -1;
+      });
     }
   }
 };
@@ -233,9 +277,9 @@ export default {
   // background: #383b48;
   color: white;
   // padding: 6px;
-  margin-bottom: 16px;
   position: relative;
   box-sizing: border-box;
+  margin-bottom: 16px;
 
   input {
     background: #292a31;
@@ -246,7 +290,7 @@ export default {
     padding: 8px;
     outline: none;
     &::placeholder {
-      color: white;
+      color: #80b3c3;
     }
   }
   button {
@@ -256,19 +300,20 @@ export default {
     width: 10%;
     position: absolute;
     right: 0px;
+    transition: 0.2s border ease;
     &:hover {
       background: darken(#43afd2, 10%);
     }
   }
 }
 .friends--container {
-  padding: 24px;
+  padding: 18px;
   align-items: center;
   margin-bottom: 16px;
   .friends--card {
     .friends--card-header {
       background: #353848;
-      padding: 14px;
+      padding: 8px;
       // border: 2px solid #333544;
       border-bottom: 3px solid #272c35;
       color: #596477;
@@ -293,10 +338,10 @@ export default {
 }
 .friends-page-header {
   color: #596477;
-  padding-left: 11px;
+  padding-left: 2px;
   // margin-bottom: 16px;
   .page-title {
-    padding-left: 14px;
+    padding-left: 0px;
   }
   .icon {
     position: relative;
@@ -309,27 +354,29 @@ export default {
   display: inline-block;
   position: relative;
   input {
-    background: transparent;
+    background: #3d4152;
     border: 0px;
-    font-size: 1rem;
-    padding: 2px;
+    font-size: 1.1rem;
+    padding-left: 24px;
+    padding-bottom: 4px;
     padding-top: 6px;
     outline: none;
     width: 100%;
     color: lightblue;
     box-sizing: border-box;
-    border-bottom: 1px solid #5379a7;
+    height: 36px;
+
     &::placeholder {
       color: rgb(151, 172, 182);
+      padding: 6px;
     }
   }
   i {
     position: absolute;
-    padding-top: -1px;
-    padding-left: 14px;
+    padding-right: 3px;
     font-size: 1.3rem;
-    right: 0px;
-    top: 2px;
+    left: 6px;
+    top: 6px;
   }
 }
 
@@ -348,29 +395,51 @@ export default {
   color: #687080;
 }
 .requests--container {
+  margin-top: 16px;
   padding-bottom: 16px;
 }
 
 .add-friend-button {
   background-color: transparent;
-  border-color: #43afd2;
-  color: #80b3c3;
+  border-color: #176680;
+  color: #43afd2;
   .icon {
     padding-right: 7px;
   }
   &:hover {
-    border-color: lighten(#43afd2, 15%);
+    border-color: lighten(#176680, 15%);
+    color: lighten(#43afd2, 15%);
   }
   &:focus {
-    box-shadow: none;
+    outline: none;
   }
 }
 
-.request-error {
+.mdi-sort-alphabetical {
+  font-size: 1.4rem;
+}
+
+.danger {
   padding: 6px;
   color: #9a3f3f;
-  background: lightcoral;
+  background: transparent;
   margin-top: 0px;
+  border: 1px solid #79303f;
+  &:hover {
+    border: 1px solid lighten(#78303f, 10%);
+  }
+}
+
+.success {
+  padding: 6px;
+  color: #9eb19e;
+  background: transparent;
+  margin-top: 0;
+  border: 1px solid #39946c;
+  outline: none;
+  &:hover {
+    color: lighten(#39946c, 10%);
+  }
 }
 
 .cancel-add-friend-button {
@@ -388,8 +457,15 @@ export default {
     box-shadow: none;
   }
 }
-
-.remove-friend-button {
+.accept-request {
+  background-color: transparent;
+  border-color: #39946c;
+  color: #9eb19e;
+  &:hover {
+    border-color: lighten(#39946c, 15%);
+  }
+}
+.decline-request {
   background-color: transparent;
   border-color: #79303f;
   color: #9a3f3f;
@@ -400,7 +476,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity 0.4s;
 }
 
 .fade-enter,

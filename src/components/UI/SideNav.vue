@@ -20,7 +20,9 @@
     <router-link tag="span" class="icon" to="/friends">
       <i class="mdi mdi-account-multiple large">
       </i>
-      <span class="badge" v-if="requests.length > 0"></span>
+      <transition name="fade">
+        <span class="badge" v-if="requests.length > 0" :key="requests.length"></span>
+      </transition>
     </router-link>
 
   </div>
@@ -72,5 +74,14 @@ export default {
     height: 10px;
     border-radius: 50%;
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

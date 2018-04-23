@@ -66,7 +66,6 @@ new Vue({
         requestRef.orderBy("requested_at", "desc").onSnapshot(snap => {
           let requests = [];
           snap.forEach(request => {
-            console.log(request.data());
             requests.push(request.data());
           });
           this.$store.dispatch("friend/SET_REQUESTS", requests);
@@ -79,7 +78,6 @@ new Vue({
           .onSnapshot(snap => {
             let friends = [];
             snap.forEach(friend => {
-              console.log(friend.data());
               friends.push(friend.data());
             });
             this.$store.dispatch("friend/SET_FRIENDS", friends);

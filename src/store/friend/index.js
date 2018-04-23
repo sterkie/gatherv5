@@ -78,6 +78,38 @@ const actions = {
     batch.delete(deleteRef1);
 
     batch.commit().then(console.log("you are now friends"));
+  },
+
+  DECLINE_FRIEND_REQUEST({ rootGetters }, payload) {
+    console.log(payload);
+    let user = rootGetters["user/user"];
+    fs
+      .collection("users")
+      .doc(user.id)
+      .collection("requests")
+      .doc(payload.requester_id)
+      .delete()
+      .then(() => {
+        console.log("deleted");
+      });
+  },
+
+  REMOVE_FRIEND({ rootGetters }, payload) {
+    let userId = rootGetters["user/user"].id;
+    let currentUserRef = fs
+      .collection("users")
+      .doc(userId)
+      .collection("friends")
+      .doc(payload.friend_id);
+    let friendRef = fs
+      .collection("users")
+      .doc(payload.friend_id)
+      .collection("friends")
+      .doc(userId);
+    let batch = fs.batch();
+    batch.delete(currentUserRef);
+    batch.delete(friendRef);
+    batch.commit().then(console.log("Unfriended ", payload.friend_username));
   }
 };
 

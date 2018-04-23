@@ -7,7 +7,9 @@
         <SideNav class="sideNav has-background-grey" />
       </div>
       <div class="column ">
-        <router-view> </router-view>
+        <transition name="fade" mode="out-in">
+          <router-view> </router-view>
+        </transition>
       </div>
     </div>
   </div>
@@ -46,5 +48,14 @@ export default {
   min-height: 100vh;
   padding-top: 14px;
   border-right: 1px solid #2c2d33;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

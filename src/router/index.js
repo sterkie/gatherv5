@@ -18,10 +18,16 @@ export const routes = [
   { path: "/events/new", component: EventCreate, beforeEnter: AuthGuard },
   { path: "/events/:id", component: EventDetail, beforeEnter: AuthGuard },
   {
-    path: "/users/:username",
-    component: FriendProfile,
-    props: true,
-    beforeEnter: AuthGuard
-  },
-  { path: "/friends", component: FriendsList, beforeEnter: AuthGuard }
+    path: "/friends",
+    component: FriendsList,
+    beforeEnter: AuthGuard,
+    children: [
+      {
+        path: ":username",
+        component: FriendProfile,
+        props: true,
+        beforeEnter: AuthGuard
+      }
+    ]
+  }
 ];

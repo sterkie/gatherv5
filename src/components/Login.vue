@@ -1,46 +1,14 @@
 <template>
   <div class="container">
-    <div class="box">
-      <p class="heading is-size-4 has-text-centered has-text-weight-light">SIGN IN</p>
-      <div class="login-error-box notification is-danger" v-if="error">
-        <div class="heading is-clearfix">
-          <!-- <span class="icon has-text-danger is-pulled-left">
-            <i class="mdi mdi-alert-decagram mdi-24px"></i>
-          </span> -->
-          <p class="has-text-centered login-error-message">
-            {{error.message}}
-          </p>
-        </div>
-        <!-- <p v-if="error.code === 'auth/email-already-in-use'" class="heading">
-          <a @click="toLogin">Click here</a> to log in instead.
-        </p> -->
+    <div class="columns">
+      <div class="login-container column is-half is-offset-one-quarter">
+        <form @submit.prevent="login" class="login-form">
+          <div class="field">
+            <label class="label">Hello</label>
+            <input type="text">
+          </div>
+        </form>
       </div>
-      <form @submit.prevent="login">
-        <div class="field">
-          <label class="label is-small">Email</label>
-          <div class="control">
-            <input class="input" type="email" v-model.trim="email">
-          </div>
-        </div>
-        <div class="field">
-          <label class="label is-small">Password</label>
-          <div class="control">
-            <input class="input" type="password" v-model.trim="password">
-          </div>
-        </div>
-        <div class="field is-grouped form-buttons">
-          <p class="control ">
-            <button class="button is-small" type="submit">
-              LOG IN
-            </button>
-          </p>
-          <p class="control ">
-            <button class="button is-small " @click="cancel">
-              CANCEL
-            </button>
-          </p>
-        </div>
-      </form>
     </div>
   </div>
 </template>
@@ -86,5 +54,8 @@ export default {
 </script>
 
 <style scoped>
-
+.login-container {
+  margin-top: 64px;
+  border: 1px solid orange;
+}
 </style>

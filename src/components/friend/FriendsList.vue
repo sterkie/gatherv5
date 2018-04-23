@@ -1,131 +1,131 @@
 <template>
-  <!-- <div class="container"> -->
-  <div class="columns ">
-    <div class="column is-one-third">
-      <div class="friends--container">
-        <nav class="level">
-          <div class="level-left">
-            <div class="level-item">
-              <div class="friends-page-header">
-                <!-- <span class="icon">
+  <div class="container">
+    <div class="columns ">
+      <div class="column is-two-fifths">
+        <div class="friends--container">
+          <nav class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <div class="friends-page-header">
+                  <!-- <span class="icon">
                   <i class="mdi mdi-account-multiple mdi-36px"></i>
                 </span> -->
-                <span class="has-text-weight-light page-title is-size-4">FRIENDS</span>
+                  <span class="has-text-weight-light page-title is-size-4">FRIENDS</span>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+
+              <div class="level-item" v-if="!showAddFriend">
+                <button class="button add-friend-button" @click="showAddFriend = true">
+                  <span class="icon is-small">
+                    <i class="mdi mdi-plus"></i>
+                  </span>
+                  Add a friend</button>
+              </div>
+              <div class="level-item" v-if="showAddFriend">
+                <button class="button cancel-add-friend-button" @click="cancelFriendRequest">
+                  Cancel</button>
+              </div>
+
+            </div>
+          </nav>
+          <transition name="fade" mode="out-in" tag="div">
+            <div class="add-friend-container" v-if="showAddFriend">
+              <input type="text" placeholder="Enter a username..." v-model="potentialFriend" @input="$v.potentialFriend.$touch">
+              <button class="button friend-request-button" @click="sendFriendRequest">
+                <span class="icon is-large">
+                  <i class="mdi mdi-plus" style="font-size: 24px"></i>
+                </span>
+              </button>
+            </div>
+          </transition>
+
+          <transition name="fade" tag="div">
+            <div v-if="doesntExistMsg.length" class="danger"> {{doesntExistMsg}} </div>
+            <div v-if="selfAddedMsg.length" class="danger">{{selfAddedMsg}} </div>
+            <div v-if="alreadyFriendsMsg.length" class="danger">{{alreadyFriendsMsg}}</div>
+            <div v-if="invalidUserNameMsg.length" class="danger">{{ invalidUserNameMsg }}</div>
+            <div v-if="requestSentMsg.length" class="success">
+              <i class="mdi mdi-check"></i>{{ requestSentMsg }}</div>
+          </transition>
+
+          <div class="requests--container">
+            <div class="friends--card">
+              <div class="friends--card-header">
+                <h3 class="is-size-5 has-text-weight-light">Requests
+                  <span class=" is-size-5" :class="{'has-text-primary': requests.length}"> ( {{requests.length ? requests.length : 'None'}} )</span>
+                </h3>
+              </div>
+              <div class="friends--card-content is-size-6" v-for="request in requests" :key="request.friend_id">
+                <nav class="level">
+                  <div class="level-left">
+                    <div class="level-item">
+                      <img :src="'http://i.pravatar.cc/' + randomAvatar" class="avatar">
+                    </div>
+                    <div class="level-item">
+                      <span class="request--username ">{{request.requester_displayname}}</span> wants to be your friend
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <div class="level-item">
+                      <div class="button accept-request" @click="acceptFriendRequest(request)">Accept</div>
+                    </div>
+                    <div class="level-item">
+                      <div class="button decline-request" @click="declineFriendRequest(request)">Decline</div>
+                    </div>
+                  </div>
+                </nav>
               </div>
             </div>
           </div>
-          <div class="level-right">
-
-            <div class="level-item" v-if="!showAddFriend">
-              <button class="button add-friend-button" @click="showAddFriend = true">
-                <span class="icon is-small">
-                  <i class="mdi mdi-plus"></i>
-                </span>
-                Add a friend</button>
-            </div>
-            <div class="level-item" v-if="showAddFriend">
-              <button class="button cancel-add-friend-button" @click="cancelFriendRequest">
-                Cancel</button>
-            </div>
-
-          </div>
-        </nav>
-        <transition name="fade" mode="out-in" tag="div">
-          <div class="add-friend-container" v-if="showAddFriend">
-            <input type="text" placeholder="Enter a username..." v-model="potentialFriend" @input="$v.potentialFriend.$touch">
-            <button class="button friend-request-button" @click="sendFriendRequest">
-              <span class="icon is-large">
-                <i class="mdi mdi-plus" style="font-size: 24px"></i>
-              </span>
-            </button>
-          </div>
-        </transition>
-
-        <transition name="fade" tag="div">
-          <div v-if="doesntExistMsg.length" class="danger"> {{doesntExistMsg}} </div>
-          <div v-if="selfAddedMsg.length" class="danger">{{selfAddedMsg}} </div>
-          <div v-if="alreadyFriendsMsg.length" class="danger">{{alreadyFriendsMsg}}</div>
-          <div v-if="invalidUserNameMsg.length" class="danger">{{ invalidUserNameMsg }}</div>
-          <div v-if="requestSentMsg.length" class="success">
-            <i class="mdi mdi-check"></i>{{ requestSentMsg }}</div>
-        </transition>
-
-        <div class="requests--container">
           <div class="friends--card">
             <div class="friends--card-header">
-              <h3 class="is-size-5 has-text-weight-light">Requests
-                <span class=" is-size-5" :class="{'has-text-primary': requests.length}"> ( {{requests.length ? requests.length : 'None'}} )</span>
-              </h3>
-            </div>
-            <div class="friends--card-content is-size-6" v-for="request in requests" :key="request.friend_id">
               <nav class="level">
                 <div class="level-left">
                   <div class="level-item">
-                    <img :src="'http://i.pravatar.cc/' + randomAvatar" class="avatar">
-                  </div>
-                  <div class="level-item">
-                    <span class="request--username ">{{request.requester_displayname}}</span> wants to be your friend
+                    <h3 class="is-size-5 has-text-weight-light">Current friends
+                      <span :class="{'has-text-primary': friends.length}"> ( {{friends.length ? friends.length : 'None'}} )</span>
+                    </h3>
                   </div>
                 </div>
                 <div class="level-right">
-                  <div class="level-item">
-                    <div class="button accept-request" @click="acceptFriendRequest(request)">Accept</div>
-                  </div>
-                  <div class="level-item">
-                    <div class="button decline-request" @click="declineFriendRequest(request)">Decline</div>
+                  <div class="level-item filter-container">
+                    <input type="text" placeholder="Filter" class="filter-input" v-model="searchTerm">
+                    <i class="mdi mdi-magnify"></i>
                   </div>
                 </div>
               </nav>
             </div>
-          </div>
-        </div>
-        <div class="friends--card">
-          <div class="friends--card-header">
-            <nav class="level">
-              <div class="level-left">
-                <div class="level-item">
-                  <h3 class="is-size-5 has-text-weight-light">Current friends
-                    <span :class="{'has-text-primary': friends.length}"> ( {{friends.length ? friends.length : 'None'}} )</span>
-                  </h3>
-                </div>
+            <transition-group name="fade" mode="out-in">
+              <div class="friends--card-content is-size-6" v-for="(friend, index) in filteredFriends" :key="friend.friend_id" @click="viewProfile(friend.friend_username)">
+                <nav class="level">
+                  <div class="level-left">
+                    <div class="level-item">
+                      <img :src="'http://i.pravatar.cc/' + (index * 10) + 20" class="avatar">
+                    </div>
+                    <div class="level-item">
+                      <span class="request--username ">{{friend.friend_displayname}}</span>
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <div class="level-item request--decline">
+                      <div class="button danger" @click="removeFriend(friend)">Remove</div>
+                    </div>
+                  </div>
+                </nav>
               </div>
-              <div class="level-right">
-                <div class="level-item filter-container">
-                  <input type="text" placeholder="Filter" class="filter-input" v-model="searchTerm">
-                  <i class="mdi mdi-magnify"></i>
-                </div>
-              </div>
-            </nav>
+            </transition-group>
           </div>
-          <transition-group name="fade" mode="out-in">
-            <div class="friends--card-content is-size-6" v-for="(friend, index) in filteredFriends" :key="friend.friend_id" @click="viewProfile(friend.friend_username)">
-              <nav class="level">
-                <div class="level-left">
-                  <div class="level-item">
-                    <img :src="'http://i.pravatar.cc/' + (index * 10) + 20" class="avatar">
-                  </div>
-                  <div class="level-item">
-                    <span class="request--username ">{{friend.friend_displayname}}</span>
-                  </div>
-                </div>
-                <div class="level-right">
-                  <div class="level-item request--decline">
-                    <div class="button danger" @click="removeFriend(friend)">Remove</div>
-                  </div>
-                </div>
-              </nav>
-            </div>
-          </transition-group>
         </div>
       </div>
-    </div>
-    <div class="column is-two-fifths profile-column">
-      <transition name="fade" appear>
-        <router-view></router-view>
-      </transition>
+      <div class="column is-two-fifths profile-column">
+        <transition name="fade" appear>
+          <router-view></router-view>
+        </transition>
+      </div>
     </div>
   </div>
-  <!-- </div> -->
   <!-- </div> -->
 </template>
 

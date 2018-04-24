@@ -9,11 +9,8 @@
       <router-link to="/register" class="navbar-item" v-if="!isAuthenticated">CREATE ACCOUNT</router-link>
 
       <div class="navbar-item" v-if="isAuthenticated">
-        <button class="button is-rounded create-event-button">
-          New event
-          <span class="icon is-small">
-            <i class="mdi mdi-plus header-icon"></i>
-          </span>
+        <button class="button create-event-button">
+          Create event
         </button>
       </div>
       <div class="navbar-item" v-if="isAuthenticated">
@@ -89,15 +86,15 @@ export default {
 <style scoped lang="scss">
 .navbar {
   color: #ffff;
-  border-top: 2px solid lightblue;
-  background: #333544;
+  // border-top: 2px solid lightblue;
+  background: hsl(233, 14%, 23%);
 }
 .navbar-brand {
   margin-left: 22px;
   font-size: 24px;
   letter-spacing: 0.3rem;
   font-family: "Lato";
-  color: #d5e4e8;
+  color: #ffffff;
 }
 
 .navbar-end {
@@ -120,18 +117,17 @@ export default {
 }
 
 .create-event-button {
-  border: 2px solid #43afd2;
-  background: #333544;
-  color: #80b3c3;
+  border: 1px solid $cprimaryborder;
+  background: transparent;
+  color: lightblue;
   font-size: 14px;
+  border-radius: 3%;
+  text-transform: uppercase;
   font-weight: 400;
-  padding-top: 6px;
-  padding-bottom: 26px;
-  padding-left: 16px;
-  padding-right: 0px;
+  transition: all 0.3s ease;
   &:hover {
-    background-color: darken(#43afd2, 35%);
-    color: lighten(#80b3c3, 20%);
+    border: 2px solid darken(#43afd2, 10%);
+    background: darken($cnavbg, 3%);
   }
 }
 

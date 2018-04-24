@@ -2,11 +2,22 @@
   <div class="container">
     <div class="columns">
       <div class="login-container column is-half is-offset-one-quarter">
+        <div class="login-title has-text-centered">
+          <span class="is-size-3">SIGN IN</span>
+        </div>
+        <div class="error-block has-text-centered" v-if="error">
+          <div>{{error.message}}</div>
+        </div>
         <form @submit.prevent="login" class="login-form">
           <div class="field">
-            <label class="label">Hello</label>
-            <input type="text">
+            <label>E-mail</label>
+            <input type="text" v-model="email">
           </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" v-model="password">
+          </div>
+          <button class="button submit">SUBMIT</button>
         </form>
       </div>
     </div>
@@ -45,17 +56,70 @@ export default {
         email: this.email,
         password: this.password
       });
-    },
-    cancel() {
-      this.$router.go(-1);
     }
+    // cancel() {
+    //   this.$router.go(-1);
+    // }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.column {
+  padding: 0;
+}
 .login-container {
   margin-top: 64px;
-  border: 1px solid orange;
+  background: $citembg;
+  box-shadow: $citemshadow;
+  .login-title {
+    padding: 16px 64px;
+    background: #323443;
+    // margin-bottom: 3px;
+    letter-spacing: 1rem;
+    color: $cheading;
+    border-bottom: 2px solid $cdarkborder;
+  }
+  .error-block {
+    padding: 32px 16px;
+    background: $cdangerborder;
+    color: #cacaca;
+    letter-spacing: 1.1px;
+  }
+  .login-form {
+    padding: 32px 64px;
+    input {
+      background: $cinputbg;
+      border: 0;
+      padding: 8px;
+      width: 100%;
+      border-radius: 2%;
+      font-size: 16px;
+      color: $cheading;
+      &:focus {
+        outline: none;
+        border: 0;
+      }
+      &::placeholder {
+        color: $ctext;
+      }
+    }
+    label {
+      color: #637884;
+      letter-spacing: 1.2px;
+      font-weight: 200;
+      display: block;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      font-size: 14px;
+    }
+    .submit {
+      margin-top: 16px;
+      width: 100%;
+      background-color: $cprimary;
+      color: white;
+      border: 0;
+    }
+  }
 }
 </style>

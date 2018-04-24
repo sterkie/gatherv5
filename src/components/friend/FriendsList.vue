@@ -7,9 +7,6 @@
             <div class="level-left">
               <div class="level-item">
                 <div class="friends-page-header">
-                  <!-- <span class="icon">
-                  <i class="mdi mdi-account-multiple mdi-36px"></i>
-                </span> -->
                   <span class="has-text-weight-light page-title is-size-4">FRIENDS</span>
                 </div>
               </div>
@@ -32,7 +29,7 @@
           </nav>
           <transition name="fade" mode="out-in" tag="div">
             <div class="add-friend-container" v-if="showAddFriend">
-              <input type="text" placeholder="Enter a username..." v-model="potentialFriend" @input="$v.potentialFriend.$touch">
+              <input type="text" placeholder="Enter a username..." v-model="potentialFriend" @keyup.enter="sendFriendRequest" @input="$v.potentialFriend.$touch">
               <button class="button friend-request-button" @click="sendFriendRequest">
                 <span class="icon is-large">
                   <i class="mdi mdi-plus" style="font-size: 24px"></i>
@@ -57,25 +54,27 @@
                   <span class=" is-size-5" :class="{'has-text-primary': requests.length}"> ( {{requests.length ? requests.length : 'None'}} )</span>
                 </h3>
               </div>
-              <div class="friends--card-content is-size-6" v-for="request in requests" :key="request.friend_id">
-                <nav class="level">
-                  <div class="level-left">
-                    <div class="level-item">
-                      <img :src="'http://i.pravatar.cc/' + randomAvatar" class="avatar">
+              <div v-for="request in requests" :key="request.friend_id">
+                <div class="friends--card-content is-size-6" v-if="request.friend_username !== user.username">
+                  <nav class="level">
+                    <div class="level-left">
+                      <div class="level-item">
+                        <img :src="'http://i.pravatar.cc/' + randomAvatar" class="avatar">
+                      </div>
+                      <div class="level-item">
+                        <span class="request--username ">{{request.requester_displayname}}</span> wants to be your friend
+                      </div>
                     </div>
-                    <div class="level-item">
-                      <span class="request--username ">{{request.requester_displayname}}</span> wants to be your friend
+                    <div class="level-right">
+                      <div class="level-item">
+                        <div class="button accept-request" @click="acceptFriendRequest(request)">Accept</div>
+                      </div>
+                      <div class="level-item">
+                        <div class="button decline-request" @click="declineFriendRequest(request)">Decline</div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item">
-                      <div class="button accept-request" @click="acceptFriendRequest(request)">Accept</div>
-                    </div>
-                    <div class="level-item">
-                      <div class="button decline-request" @click="declineFriendRequest(request)">Decline</div>
-                    </div>
-                  </div>
-                </nav>
+                  </nav>
+                </div>
               </div>
             </div>
           </div>
@@ -110,7 +109,7 @@
                   </div>
                   <div class="level-right">
                     <div class="level-item request--decline">
-                      <div class="button danger" @click="removeFriend(friend)">Remove</div>
+
                     </div>
                   </div>
                 </nav>
@@ -120,7 +119,7 @@
         </div>
       </div>
       <div class="column is-two-fifths profile-column">
-        <transition name="fade" appear>
+        <transition name="fade" mode="out-in">
           <router-view></router-view>
         </transition>
       </div>
@@ -182,7 +181,9 @@ export default {
       console.log(pfriend);
       if (pfriend.length > 2) {
         if (this.alreadyFriends(pfriend)) {
-          this.alreadyFriendsMsg = "You are already friends";
+          this.alreadyFriendsMsg = `You are already friends with ${
+            this.potentialFriend
+          }`;
         } else if (this.addSelf(pfriend)) {
           this.alreadyFriendsMsg =
             "You tried to send yourself a friend-request";
@@ -229,12 +230,7 @@ export default {
       this.$store.dispatch("friend/DECLINE_FRIEND_REQUEST", request);
     },
 
-    removeFriend(friend) {
-      this.$store.dispatch("friend/REMOVE_FRIEND", friend);
-    },
-
     viewProfile(username) {
-      console.log(username);
       this.$router.push({ path: `/friends/${username}` });
     }
   },
@@ -415,30 +411,36 @@ export default {
   }
 }
 
+.remove-friend-button {
+  background: transparent;
+  border-color: $cdangerborder;
+  color: $cdangertext;
+  &:hover {
+    border-color: lighten($cdangerborder, 20%);
+  }
+}
+
 .mdi-sort-alphabetical {
   font-size: 1.4rem;
 }
 
 .danger {
   padding: 6px;
-  color: #9a3f3f;
-  background: transparent;
+  background: $cdangerborder;
+  color: #cacaca;
   margin-top: 0px;
-  border: 1px solid #79303f;
-  &:hover {
-    border: 1px solid lighten(#78303f, 10%);
-  }
+  letter-spacing: 1.1px;
 }
 
 .success {
   padding: 6px;
-  color: #9eb19e;
-  background: transparent;
+  color: white;
+  background: $csuccessborder;
   margin-top: 0;
-  border: 1px solid #39946c;
+  // border: 1px solid #39946c;
   outline: none;
-  &:hover {
-    color: lighten(#39946c, 10%);
+  i {
+    padding-right: 8px;
   }
 }
 

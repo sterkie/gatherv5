@@ -100,10 +100,10 @@ const actions = {
       .collection("users")
       .doc(userId)
       .collection("friends")
-      .doc(payload.friend_id);
+      .doc(payload);
     let friendRef = fs
       .collection("users")
-      .doc(payload.friend_id)
+      .doc(payload)
       .collection("friends")
       .doc(userId);
     let batch = fs.batch();

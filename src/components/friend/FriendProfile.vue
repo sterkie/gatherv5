@@ -4,6 +4,9 @@
       <h3 class="profile-title">
         FRIEND PROFILE
       </h3>
+      <div>
+        <div class="button remove-friend-button" @click="removeFriend(selectedUser.id)">Remove</div>
+      </div>
     </div>
     <transition name="fade" mode="out-in">
       <div class="info-box" v-if="selectedUser" :key="selectedUser.id">
@@ -33,9 +36,14 @@ export default {
   beforeMount() {
     this.getProfile();
   },
+
   methods: {
     getProfile() {
       this.$store.dispatch("user/GET_PROFILE", this.username);
+    },
+    removeFriend(friendId) {
+      this.$store.dispatch("friend/REMOVE_FRIEND", friendId);
+      this.$router.push("/friends");
     }
   },
   watch: {
@@ -57,15 +65,19 @@ export default {
 
 <style scoped lang="scss">
 .profile-container {
+  border: 1px solid orange;
   padding: 18px;
   .profile-header {
-    font-size: 1.5rem;
+    display: flex;
+
+    justify-content: space-between;
     font-weight: 200;
     text-transform: uppercase;
     background: transparent;
     margin-bottom: 1.5rem;
     .profile-title {
       color: #596477;
+      font-size: 1.5rem;
     }
     span {
       color: #6eb3d6;

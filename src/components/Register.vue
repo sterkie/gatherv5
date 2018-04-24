@@ -1,70 +1,62 @@
 <template>
   <div class="container">
-    <div class="box">
-      <p class="heading is-size-4 has-text-centered has-text-weight-light">SIGN UP</p>
-      <div class="auth-error-box notification is-danger has-text-centered" v-if="error">
-        <p class="heading">
-          {{error.message}}
-        </p>
-        <p v-if="error.code === 'auth/email-already-in-use'" class="heading">
-          <a @click="toLogin">Click here</a> to log in instead.
-        </p>
+    <div class="columns">
+      <div class="register-container column is-half is-offset-one-quarter">
+        <div class="register-title has-text-centered">
+          <span class="is-size-3">CREATE ACCOUNT</span>
+        </div>
+        <div v-if="error" class="error-block has-text-centered">
+          <p>
+            {{error.message}}
+          </p>
+          <p v-if="error.code === 'auth/email-already-in-use'">
+            <a @click="toLogin">Click here</a> to log in instead.
+          </p>
+        </div>
+        <form @submit.prevent="register" class="register-form">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" v-model.trim="email" :class="{'is-danger': $v.email.$error, 'is-success': !$v.email.$invalid && $v.email.$dirty}" @input="delayTouch($v.email)">
+            <p class="error-message" v-if="!$v.email.email && $v.email.$dirty">Please enter a valid e-mail address.</p>
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <input type="password" v-model.trim="password" @input="delayTouch($v.password)" :class="{'is-danger': $v.password.$error, 'is-success': !$v.password.$invalid && $v.password.$dirty }">
+            <p class="error-message" v-if="$v.password.$dirty && !$v.password.minLength">Password must be at least 4 characters long.</p>
+          </div>
+
+          <div class="field">
+            <label>Confirm password</label>
+            <input :class="{'is-danger': $v.password2.$error, 'is-success': !$v.password2.$invalid && $v.password2.$dirty}" @input="delayTouch($v.password2)" type="password" v-model.trim="password2">
+            <p class="error-message" v-if="$v.password2.$dirty && !$v.password2.minLength">Password must be at least 4 characters long.</p>
+            <p class="error-message" v-if="$v.password2.$dirty && !$v.password2.sameAsPassword">Passwords must be identical.</p>
+          </div>
+
+          <div class="field">
+            <label>Username</label>
+            <div :class="{'is-loading': loading}">
+              <input type="text" v-model.trim="username" @input="delayTouch($v.username)" :class="{'is-danger': $v.username.$error && !loading || !this.unique && $v.username.$dirty && !loading, 'is-success': !$v.username.$invalid && $v.username.$dirty && this.unique && !loading}">
+              <div v-if="loading">
+                <p class="help" v-if="$v.username.$dirty">Checking...</p>
+              </div>
+              <transition name="fade" mode="out-in">
+                <div v-if="!loading">
+                  <p class="error-message" v-if="$v.username.$dirty && !$v.username.minLength">Username must be at least 3 characters</p>
+                  <p class="error-message" v-if="$v.username.$dirty && !$v.username.alphaNum">Username can only contain letters and numbers.</p>
+                  <p class="error-message" v-if="$v.username.$dirty && !this.unique && username.length > 2">This username is already taken.</p>
+                  <p class="success-message" v-if="$v.username.$dirty && this.unique && username.length > 2 && $v.username.alphaNum">This username is available!</p>
+                </div>
+              </transition>
+            </div>
+          </div>
+
+          <button class="button submit" type="submit" :disabled="$v.$invalid || !unique">
+            CREATE ACCOUNT
+          </button>
+
+        </form>
       </div>
-
-      <form @submit.prevent="register">
-        <div class="field">
-          <label class="label is-small">Email</label>
-          <div class="control">
-            <input class="input" type="email" placeholder="e.g MarkSmith@gmail.com" v-model.trim="email" :class="{'is-danger': $v.email.$error, 'is-success': !$v.email.$invalid && $v.email.$dirty}" @input="delayTouch($v.email)">
-            <p class="help is-danger" v-if="!$v.email.email && $v.email.$dirty">Please enter a valid e-mail address.</p>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label is-small">Password</label>
-          <div class="control">
-            <input class="input" type="password" placeholder="Must be between 4 and 16 alphanumeric characters" v-model.trim="password" @input="delayTouch($v.password)" :class="{'is-danger': $v.password.$error, 'is-success': !$v.password.$invalid && $v.password.$dirty }">
-            <p class="help is-danger" v-if="$v.password.$dirty && !$v.password.minLength">Password must be at least 4 characters long.</p>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label is-small">Confirm password</label>
-          <div class="control">
-            <input class="input" :class="{'is-danger': $v.password2.$error, 'is-success': !$v.password2.$invalid && $v.password2.$dirty}" @input="delayTouch($v.password2)" type="password" placeholder="Repeat your password" v-model.trim="password2">
-            <p class="help is-danger" v-if="$v.password2.$dirty && !$v.password2.minLength">Password must be at least 4 characters long.</p>
-            <p class="help is-danger" v-if="$v.password2.$dirty && !$v.password2.sameAsPassword">Passwords must be identical.</p>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label is-small">Username</label>
-          <div class="control" :class="{'is-loading': loading}">
-            <input class="input" type="text" placeholder="e.g. MarkSmith" v-model.trim="username" @input="delayTouch($v.username)" :class="{'is-danger': $v.username.$error && !loading || !this.unique && $v.username.$dirty && !loading, 'is-success': !$v.username.$invalid && $v.username.$dirty && this.unique && !loading}">
-            <!-- <input class="input" type="text" placeholder="e.g. MarkSmith" v-model.trim="username" @input="delayTouch($v.username)"> -->
-            <div v-if="loading">
-              <p class="help" v-if="$v.username.$dirty">Checking...</p>
-            </div>
-            <div v-if="!loading">
-              <p class="help is-danger" v-if="$v.username.$dirty && !$v.username.minLength">Username must be at least 3 characters</p>
-              <p class="help is-danger" v-if="$v.username.$dirty && !$v.username.alphaNum">Username can only contain letters and numbers.</p>
-              <p class="help is-danger" v-if="$v.username.$dirty && !this.unique && username.length > 2">This username is already taken.</p>
-              <p class="help is-success" v-if="$v.username.$dirty && this.unique && username.length > 2 && $v.username.alphaNum">This username is available!</p>
-            </div>
-          </div>
-        </div>
-        <div class="field is-grouped form-buttons">
-          <p class="control ">
-            <button class="button  is-small" type="submit" :disabled="$v.$invalid || !unique">
-              SIGN UP
-            </button>
-          </p>
-          <p class="control ">
-            <button class="button   is-small " @click="cancel">
-              CANCEL
-            </button>
-          </p>
-        </div>
-      </form>
-
     </div>
   </div>
 </template>
@@ -148,6 +140,8 @@ export default {
           doc.empty ? (this.unique = true) : (this.unique = false);
           this.$store.commit("SET_LOADING", false, { root: true });
         });
+      } else {
+        this.$store.commit("SET_LOADING", false, { root: true });
       }
     }, 400),
 
@@ -168,9 +162,9 @@ export default {
         });
       }
     },
-    cancel() {
-      this.$router.go(-1);
-    },
+    // cancel() {
+    //   this.$router.go(-1);
+    // },
     toLogin() {
       this.$store.dispatch("CLEAR_ERROR");
       this.$router.push("/login");
@@ -180,5 +174,95 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.column {
+  padding: 0;
+}
+.register-container {
+  margin-top: 64px;
+  background: $citembg;
+  box-shadow: $citemshadow;
+  .register-title {
+    padding: 16px 64px;
+    background: #323443;
+    // margin-bottom: 3px;
+    letter-spacing: 1rem;
+    color: $cheading;
+    border-bottom: 2px solid $cdarkborder;
+  }
+  .error-block {
+    padding: 32px 16px;
+    background: $cdangerborder;
+    color: #cacaca;
+    letter-spacing: 1.1px;
+  }
 
+  .error-message {
+    margin-top: 6px;
+    padding: 8px;
+    background: $cdangerborder;
+    color: #cacaca;
+    letter-spacing: 1.1px;
+  }
+  .success-message {
+    margin-top: 8px;
+    padding: 6px;
+    color: white;
+    background: $csuccessborder;
+    // border: 1px solid #39946c;
+    outline: none;
+  }
+  .register-form {
+    padding: 32px 64px;
+    input {
+      background: $cinputbg;
+      border: 0;
+      padding: 8px;
+      width: 100%;
+      border-radius: 2%;
+      font-size: 16px;
+      color: $cheading;
+      &:focus {
+        outline: none;
+        border: 0;
+      }
+      &::placeholder {
+        color: $ctext;
+        font-size: 14px;
+      }
+    }
+    label {
+      color: #637884;
+      letter-spacing: 1.2px;
+      font-weight: 200;
+      display: block;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      font-size: 14px;
+    }
+    .help {
+      letter-spacing: 1.1px;
+      font-size: 12px;
+      padding-left: 4px;
+    }
+    .submit {
+      width: 50%;
+      background-color: $cprimary;
+      color: white;
+      border: 0;
+    }
+    .is-grouped {
+      margin-top: 32px;
+    }
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

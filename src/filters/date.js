@@ -7,6 +7,9 @@ export const monthday = value => {
 export const shortdate = value => {
   return moment(value).format("dddd MMMM Do");
 };
+export const longdate = value => {
+  return moment(value).format("dddd, MMMM Do YYYY");
+};
 
 export const ago = value => {
   return moment(value).fromNow();

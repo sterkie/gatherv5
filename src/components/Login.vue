@@ -57,9 +57,6 @@ export default {
         password: this.password
       });
     }
-    // cancel() {
-    //   this.$router.go(-1);
-    // }
   }
 };
 </script>
@@ -93,7 +90,7 @@ export default {
       border: 0;
       padding: 8px;
       width: 100%;
-      border-radius: 2%;
+      border-radius: 6px;
       font-size: 16px;
       color: $cheading;
       &:focus {

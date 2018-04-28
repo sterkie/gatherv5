@@ -23,14 +23,10 @@ import { fs } from "../firebase_config";
 export default {
   name: "Dashboard",
   data() {
-    return {
-      friendName: ""
-    };
+    return {};
   },
   methods: {
-    addFriend() {
-      this.$store.dispatch("friend/ADD_FRIEND_REQUEST", this.friendName);
-    }
+    uploadAvatar() {}
   },
   computed: {
     user() {

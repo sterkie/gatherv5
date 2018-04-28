@@ -18,7 +18,7 @@
                   <span class="icon is-small">
                     <i class="mdi mdi-plus"></i>
                   </span>
-                  Add a friend</button>
+                </button>
               </div>
               <div class="level-item" v-if="showAddFriend">
                 <button class="button cancel-add-friend-button" @click="cancelFriendRequest">
@@ -353,7 +353,7 @@ export default {
     background: #3d4152;
     border: 0px;
     font-size: 1.1rem;
-    padding-left: 24px;
+    padding-left: 30px;
     padding-bottom: 4px;
     padding-top: 6px;
     outline: none;
@@ -399,24 +399,14 @@ export default {
   background-color: transparent;
   border-color: #176680;
   color: #43afd2;
-  .icon {
-    padding-right: 7px;
-  }
+  font-size: 16px;
+
   &:hover {
     border-color: lighten(#176680, 15%);
     color: lighten(#43afd2, 15%);
   }
   &:focus {
     outline: none;
-  }
-}
-
-.remove-friend-button {
-  background: transparent;
-  border-color: $cdangerborder;
-  color: $cdangertext;
-  &:hover {
-    border-color: lighten($cdangerborder, 20%);
   }
 }
 
@@ -474,16 +464,6 @@ export default {
   &:hover {
     border-color: lighten(#79303f, 15%);
   }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.4s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>
 

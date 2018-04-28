@@ -5,7 +5,7 @@
         FRIEND PROFILE
       </h3>
       <div>
-        <div class="button remove-friend-button" @click="removeFriend(selectedUser.id)">Remove</div>
+        <div class="button remove-friend-button" @click="removeFriend(selectedUser.id)">Remove friend</div>
       </div>
     </div>
     <transition name="fade" mode="out-in">
@@ -44,6 +44,7 @@ export default {
     removeFriend(friendId) {
       this.$store.dispatch("friend/REMOVE_FRIEND", friendId);
       this.$router.push("/friends");
+      this.$store.commit("user/SELECTED_USER", null);
     }
   },
   watch: {
@@ -64,8 +65,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.remove-friend-button {
+  background: transparent;
+  border-color: $cdangerborder;
+  color: $cdangertext;
+  &:hover {
+    border-color: lighten($cdangerborder, 20%);
+  }
+}
 .profile-container {
-  border: 1px solid orange;
   padding: 18px;
   .profile-header {
     display: flex;

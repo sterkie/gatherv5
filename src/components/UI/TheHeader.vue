@@ -9,9 +9,11 @@
       <router-link to="/register" class="navbar-item" v-if="!isAuthenticated">CREATE ACCOUNT</router-link>
 
       <div class="navbar-item" v-if="isAuthenticated">
-        <button class="button create-event-button">
-          Create event
-        </button>
+        <router-link to="/events/new">
+          <button class="button create-event-button">
+            Create event
+          </button>
+        </router-link>
       </div>
       <div class="navbar-item" v-if="isAuthenticated">
         <span class="icon">
@@ -119,7 +121,7 @@ export default {
 .create-event-button {
   border: 1px solid $cprimaryborder;
   background: transparent;
-  color: lightblue;
+  color: $cprimary;
   font-size: 14px;
   border-radius: 3%;
   text-transform: uppercase;

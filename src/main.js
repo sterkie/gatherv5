@@ -11,7 +11,7 @@ import Vuelidate from "vuelidate";
 import Notifications from "vue-notification";
 
 // FILTERS
-import { monthday, shortdate, showMonth, ago } from "./filters/date";
+import { monthday, shortdate, longdate, showMonth, ago } from "./filters/date";
 
 // COMPONENTS
 import App from "./App.vue";
@@ -32,6 +32,7 @@ const router = new Router({
 Vue.filter("monthday", monthday);
 Vue.filter("ago", ago);
 Vue.filter("shortdate", shortdate);
+Vue.filter("longdate", longdate);
 Vue.filter("showMonth", showMonth);
 
 Vue.directive("click-outside", {
@@ -56,9 +57,10 @@ new Vue({
   created() {
     auth.onAuthStateChanged(user => {
       if (user) {
+        console.log(user);
         this.$store.dispatch("user/PERSIST_LOGIN", user);
         this.$store.dispatch("user/LOAD_USER_DATA");
-        this.$store.dispatch("event/GET_EVENTS");
+        // this.$store.dispatch("event/GET_EVENTS");
         let requestRef = fs
           .collection("users")
           .doc(user.uid)

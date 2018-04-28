@@ -9,13 +9,41 @@ import FriendProfile from "../components/friend/FriendProfile.vue";
 import FriendsList from "../components/friend/FriendsList.vue";
 import AuthGuard from "./auth-guard";
 
+import What from "../components/event/new/What.vue";
+import Where from "../components/event/new/Where.vue";
+import When from "../components/event/new/When.vue";
+import Who from "../components/event/new/Who.vue";
+
 export const routes = [
   { path: "/", component: Home },
   { path: "/about", component: About },
   { path: "/register", component: Register },
   { path: "/login", component: Login },
   { path: "/dashboard", component: Dashboard, beforeEnter: AuthGuard },
-  { path: "/events/new", component: EventCreate, beforeEnter: AuthGuard },
+  {
+    path: "/events/new",
+    redirect: "/events/new/what",
+    component: EventCreate,
+    beforeEnter: AuthGuard,
+    children: [
+      {
+        path: "what",
+        component: What
+      },
+      {
+        path: "where",
+        component: Where
+      },
+      {
+        path: "when",
+        component: When
+      },
+      {
+        path: "who",
+        component: Who
+      }
+    ]
+  },
   { path: "/events/:id", component: EventDetail, beforeEnter: AuthGuard },
   {
     path: "/friends",

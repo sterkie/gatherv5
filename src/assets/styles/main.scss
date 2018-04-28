@@ -20,7 +20,7 @@ $link: #42a9cb;
 $primary: $gather;
 $primary-invert: invert($gather);
 
-$family-primary: "Nunito";
+$family-primary: "Roboto";
 
 @import "~bulma/sass/utilities/derived-variables";
 
@@ -31,7 +31,7 @@ $addColors: (
 );
 $colors: map-merge($colors, $addColors);
 
-$navbar-height: 4rem;
+$navbar-height: 5rem;
 
 $box-background-color: $bgdarker;
 
@@ -49,5 +49,18 @@ $navbar-dropdown-item-active-color: #646e80;
 $navbar-dropdown-item-active-background-color: lighten(#30313d, 10);
 
 @import "~bulma";
-// @import "~buefy/src/scss/buefy";
-@import "./stepper.sass";
+
+html,
+body {
+  height: 100%;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}

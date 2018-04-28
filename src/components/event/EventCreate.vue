@@ -1,130 +1,179 @@
 <template>
-    <div class="container">
-        <h3 class="title is-size-3 has-text-weight-light has-text-centered has-text-grey page--title">NEW EVENT</h3>
-        <form @submit.prevent="addEvent">
-            <div class="columns is-gapless">
-                <div class="column is-two-thirds">
-                    <div class="event--form-container">
-                        <div class=" event-create-part">
-                            <div class="event-create-part-header">
-                                <h3 class="subtitle is-size-5">Enter some basic information</h3>
-                            </div>
-                            <div class="field">
-                                <label class="label is-small">Select a title for your event</label>
-                                <div class="control">
-                                    <input class="input" type="text" placeholder="e.g. Mike's birthday party" v-model.trim="title">
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label is-small ">Location</label>
-                                <div class="control">
-                                    <input class="input" type="text" placeholder="Set the scene" v-model.trim="location">
-                                </div>
-                                <p class="help has-text-grey">You'll be able to include more detailed directions after you create the event</p>
-                            </div>
-                            <div class="field">
-                                <label class="label is-small ">Short description</label>
-                                <div class="field">
-                                    <div class="control">
-                                        <textarea class="textarea" placeholder="What is all the fuss about?"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class=" event-create-part">
-                            <div class="event-create-part-header">
-                                <h3 class="subtitle is-size-5">When is it going down?</h3>
-                            </div>
-                            <b-field label="Would you like to include a poll to decide the date?" custom-class="is-small" required>
-                                <b-select v-model="event_status" size="is-small">
-                                    <option value="planned">No, the date is already decided.</option>
-                                    <option value="voting">Yes, let participants vote on the most suitable date</option>
-                                </b-select>
-                            </b-field>
-                            <div class="field" v-if="event_status === 'planned'">
-                                <label class="label is-small ">Pick the event date</label>
-                                <div class="control">
-                                    <DatePicker v-model="date" :multi="false" />
-                                </div>
-
-                            </div>
-                            <div class="field" v-if="event_status === 'voting'">
-                                <label class="label is-small">Suggested dates</label>
-                                <div class="control">
-                                    <DatePicker v-model="suggestedDates" :multi="true" />
-                                </div>
-                                <p class="help has-text-grey">You can select up to 6</p>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-                <div class="column is-one-third">
-                    <div class=" inviter-box">
-                        <div class="event-create-part-header">
-                            <h3 class="subtitle is-size-5">Invite your friends!</h3>
-                        </div>
-                    </div>
-                </div>
-
+  <div>
+    <div class="steps-container">
+      <div class="columns is-gapless has-text-centered is-mobile">
+        <div class="column is-one-quarter" v-for="(step, index) in steps" :key="index">
+          <div class="step" :class="[step.toLowerCase() === currentStep ? 'active-step' : '', index === 3 ? 'last' : '']">
+            <div class="step-title">
+              {{step}}
             </div>
-            <div class="field is-grouped field-buttons">
-                <div class="control">
-                    <button class="button is-primary add-event-button is-small" type="submit">
-                        SUBMIT
-                    </button>
-                </div>
-                <div class="control">
-                    <button class="button is-dark is-outlined is-small">
-                        CANCEL
-                    </button>
-                </div>
-            </div>
-        </form>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="container">
+      <transition name="fade" mode="out-in">
+        <div>
+          <router-view></router-view>
+        </div>
+      </transition>
+      <nav class="navbar is-fixed-bottom is-transparent is-hidden-mobile" id="stepper">
+        <div class="container">
+          <div class="navbar-start">
+            <div class="step-buttons">
+              <button class="button back" @click="prevStep">
+                PREVIOUS STEP</button>
+            </div>
+          </div>
+          <div class="step-buttons">
+            <button class="button forward" @click="nextStep">
+              NEXT STEP
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+
 </template>
 
 <script>
-import DatePicker from "./DatePicker.vue";
 export default {
   name: "EventCreate",
+  components: {},
   data() {
     return {
-      title: "",
-      suggestedDates: [],
-      location: "",
-      event_status: "",
-      date: ""
+      steps: ["What", "Where", "When", "Who"]
     };
   },
-  components: {
-    DatePicker
-  },
-  computed: {
-    user() {
-      return this.$store.getters["user/user"];
-    }
+  mounted() {
+    this.$store.commit("event/SET_CURRENT_STEP", "what");
   },
   methods: {
-    addEvent() {
-      let eventObj = {
-        title: this.title,
-        location: this.location,
-        suggestedDates: this.suggestedDates,
-        event_status: this.event_status,
-        date: this.date
-      };
-      this.$store.dispatch("event/ADD_EVENT", eventObj);
-      this.suggestedDates = [];
+    nextStep() {
+      let next = this.getNextStep();
+      if (next !== "none") {
+        this.$router.push(`${next}`);
+        this.$store.commit("event/SET_CURRENT_STEP", next);
+      }
     },
-    cancelAdd() {
-      this.$router.go(-1);
+    prevStep() {
+      let prev = this.getPrevStep();
+      if (prev !== "none") {
+        this.$router.push(`${prev}`);
+        this.$store.commit("event/SET_CURRENT_STEP", prev);
+      }
+    },
+    getNextStep() {
+      switch (this.currentStep) {
+        case "what":
+          return "where";
+
+        case "where":
+          return "when";
+
+        case "when":
+          return "who";
+
+        case "who":
+          return "none";
+      }
+    },
+    getPrevStep() {
+      switch (this.currentStep) {
+        case "what":
+          return "none";
+
+        case "where":
+          return "what";
+
+        case "when":
+          return "where";
+
+        case "who":
+          return "when";
+      }
+    }
+  },
+  computed: {
+    currentStep() {
+      return this.$store.getters["event/currentStep"];
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss">
+#stepper {
+  background: transparent;
+}
+.step-buttons {
+  margin-top: 32px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  button {
+    height: 54px;
+    width: 256px;
+    color: #5c8896;
+    border: 0;
+    font-size: 16px;
+    background-color: #3a3d4a;
+    letter-spacing: 0.2rem;
+    &:focus {
+      border: 0px;
+      outline: none;
+      color: white;
+      background: darken(#454c6b, 5%);
+    }
+    &:hover {
+      border: 0;
+      color: white;
+      background: darken(#454c6b, 5%);
+    }
+  }
+  .forward {
+    i {
+      font-size: 28px;
+      padding-left: 32px;
+    }
+  }
+  .back {
+    i {
+      font-size: 28px;
+      padding-right: 32px;
+    }
+  }
+}
 
+.steps-container {
+  border: 1px solid $cdarkborder;
+  margin-top: 16px;
+  border-radius: 2%;
+  .step {
+    background: $citembg;
+    padding: 24px;
+    border-right: 1px solid $cdarkborder;
+    transition: 1s background ease;
+    .step-title {
+      font-weight: 300;
+      letter-spacing: 1.1px;
+      font-size: 18px;
+      //   color: $cheading;
+    }
+    &::after {
+      top: 0;
+      right: 0;
+      padding: 8px;
+      border: 1px solid orange;
+    }
+  }
+  .last {
+    border-right: 0;
+  }
+  .active-step {
+    background: $cprimary;
+    color: white;
+  }
+}
 </style>
